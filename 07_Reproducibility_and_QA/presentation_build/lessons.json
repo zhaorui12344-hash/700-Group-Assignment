@@ -1,0 +1,1202 @@
+[
+  {
+    "title": {
+      "zh": "先看懂这份作业在回答什么",
+      "en": "What this assignment is trying to answer"
+    },
+    "source": "Requirement, Parts 1–4; W3 slides 7–11; W7 slides 2–3",
+    "blocks": [
+      {
+        "label": {
+          "zh": "学习目标",
+          "en": "Learning goal"
+        },
+        "text": {
+          "zh": "把自己想象成银行分析师：先了解客户资料，再找出相似客户，最后解释哪些特征与盈利有关。数据有 10,000 行、7 个原始变量。一行是一个客户记录，一列是一项特征。没有客户 ID，因此不能确认每行是否确实来自不同的人。",
+          "en": "Imagine being a bank analyst. First understand the customer records, then find similar customers, and finally examine characteristics associated with profit. The data contain 10,000 rows and seven original variables. A row is a customer record and a column is a characteristic. Without customer IDs, we cannot independently confirm that every row represents a different person."
+        }
+      },
+      {
+        "label": {
+          "zh": "两种价值",
+          "en": "Two meanings of value"
+        },
+        "text": {
+          "zh": "Yield 是银行从客户获得的当前利润，单位是金额，不是收益百分比。CLV 是旧公式算出的整个客户关系期间的预期价值，不是真正观察到的未来利润。题目没有给 Income 或交易次数的时间单位，因此不要自行说它们是月收入、年收入或每月交易。",
+          "en": "Yield is current customer profit in dollars, not a percentage return. CLV is an existing formula-based estimate of value over the customer relationship, not observed future profit. The brief does not specify the time period for Income or transaction counts, so do not label them monthly or annual."
+        }
+      },
+      {
+        "label": {
+          "zh": "分析路线",
+          "en": "The analysis route"
+        },
+        "text": {
+          "zh": "第一步，单变量分析：分别描述各列。第二步，双变量分析：看两列是否有关。第三步，k-means：不看盈利标签，把相似客户分组。第四步，回归：用客户特征解释记录 CLV，并在未参与训练的记录上检查误差。第五步，把群体画像和模型证据结合成可检验的建议。",
+          "en": "Step 1 describes each variable separately. Step 2 examines relationships between two variables. Step 3 uses k-means to group similar customers without using profit outcomes. Step 4 uses regression to explain recorded CLV and evaluates errors on records held out from training. Step 5 connects profiles and model evidence to testable actions."
+        }
+      },
+      {
+        "label": {
+          "zh": "变量类型",
+          "en": "Variable types"
+        },
+        "text": {
+          "zh": "Tot_Prod、No_Trans 是计数；Income、Yield、CLV 是金额；Age 是年龄。Cat_Age 虽然存成数字，却表示有顺序的年龄类别。类别 6 不是类别 3 的“两倍年龄”。变量的含义决定分析方法，不能只看电脑把它存成什么格式。",
+          "en": "Tot_Prod and No_Trans are counts. Income, Yield and CLV are amounts. Age is measured in years. Cat_Age contains ordered category codes even though the file stores numbers. Category 6 does not mean twice the age of category 3. Meaning, rather than storage format, determines the analysis."
+        }
+      },
+      {
+        "label": {
+          "zh": "自测",
+          "en": "Check yourself"
+        },
+        "text": {
+          "zh": "为什么不能直接说 CLV 最高的客户未来一定最赚钱？答案：CLV 本身是待理解的旧估计，我们没有真实未来利润来验证它。",
+          "en": "Why can we not say that the highest-CLV customers will certainly generate the most future profit? Because CLV is an old estimate, and we lack future outcomes to validate it."
+        }
+      }
+    ],
+    "figure": null
+  },
+  {
+    "title": {
+      "zh": "均值、中位数和比例：先描述典型客户",
+      "en": "Mean, median and proportions: describing a typical customer"
+    },
+    "source": "W3 slides 15, 20–23, 26, 31; tables/01_univariate_summary.csv",
+    "blocks": [
+      {
+        "label": {
+          "zh": "为什么做",
+          "en": "Why do this?"
+        },
+        "text": {
+          "zh": "模型很复杂也不能替代常识检查。先看中心位置和频数，能发现一列是否特别偏斜、是否被少数极端记录影响，以及“平均客户”是否具有代表性。",
+          "en": "A complicated model cannot replace basic data checks. Measures of centre and frequency show whether a variable is skewed, dominated by a few extreme records, or poorly represented by an average customer."
+        }
+      },
+      {
+        "label": {
+          "zh": "从小例子开始",
+          "en": "Start with a tiny example"
+        },
+        "text": {
+          "zh": "假设 5 位客户的利润为 10、20、30、40、900。均值 = (10+20+30+40+900)/5 = 200。按大小排序，中间的第 3 个数是 30，所以中位数为 30。900 把均值拉高，但没有把中位数拉到 200。这个例子只是教学用，不是本作业的数据。",
+          "en": "Suppose five customers have profits of 10, 20, 30, 40 and 900. Their mean is 1,000/5 = 200. The middle ordered value is 30, so the median is 30. The extreme value pulls up the mean much more than the median. These five values are a teaching example, not assignment records."
+        }
+      },
+      {
+        "label": {
+          "zh": "本作业结果",
+          "en": "Our actual results"
+        },
+        "text": {
+          "zh": "Yield 均值为 $158.57，中位数只有 $28，最大值为 $50,947。43.68% 的记录利润为负。CLV 均值为 $1,932.26，中位数为 $1,704。利润分布明显向右拖着长尾，因此同时报告均值、中位数和亏损比例，比只报均值更完整。",
+          "en": "Mean Yield is $158.57, but median Yield is only $28 and the maximum is $50,947. Negative Yield occurs in 43.68% of records. Mean CLV is $1,932.26 and median CLV is $1,704. The long right tail makes the median and loss rate essential companions to the mean."
+        }
+      },
+      {
+        "label": {
+          "zh": "如何读图",
+          "en": "How to read the plot"
+        },
+        "text": {
+          "zh": "直方图横轴是数值区间，纵轴是该区间内的记录数量。右侧有很长的尾巴，表示少数记录特别大。不要把柱子的高度当成利润金额。均值仍然有用：它与总利润有关；中位数更适合描述排序中间的人。",
+          "en": "A histogram places value intervals on the horizontal axis and record counts on the vertical axis. A long right tail means that a few values are very large. Bar height is a count, not a dollar amount. The mean remains useful for total-profit arithmetic, while the median describes the middle-ranked record."
+        }
+      },
+      {
+        "label": {
+          "zh": "自测",
+          "en": "Check yourself"
+        },
+        "text": {
+          "zh": "“平均利润 $158.57，所以多数客户都赚这个数”对吗？不对。均值不代表多数记录集中在该值附近，尤其在严重右偏的数据中。",
+          "en": "Does mean profit of $158.57 imply that most customers generate about that amount? No. A mean does not establish where most records lie, especially in strongly skewed data."
+        }
+      }
+    ],
+    "figure": null
+  },
+  {
+    "title": {
+      "zh": "标准差、四分位数和异常值",
+      "en": "Spread, quartiles and outliers"
+    },
+    "source": "W3 slides 23, 26, 31; W7 slide 15; tables/01_outlier_screening.csv",
+    "blocks": [
+      {
+        "label": {
+          "zh": "标准差是什么",
+          "en": "What is standard deviation?"
+        },
+        "text": {
+          "zh": "均值告诉你中心在哪，标准差告诉你数值散得有多开。样本方差先把每个值与均值的差平方，加总后除以 n−1；标准差再把方差开平方，回到原变量单位。平方可避免正负偏差互相抵消。",
+          "en": "The mean describes centre. Standard deviation describes spread. Sample variance adds the squared deviations from the mean and divides by n−1. Taking its square root returns to the original units. Squaring prevents positive and negative deviations from cancelling."
+        }
+      },
+      {
+        "label": {
+          "zh": "手算一次",
+          "en": "Work through one calculation"
+        },
+        "text": {
+          "zh": "教学例子 1、2、3 的均值为 2。平方偏差为 1、0、1。样本方差 = 2/(3−1)=1，标准差 = 1。实际 Yield 的标准差约为 $696.50，远大于其中位数，提示分布很分散。并不能由此断言 68% 的利润都在均值加减一个标准差之内：68% 规则需要接近正态分布。",
+          "en": "For the teaching values 1, 2 and 3, the mean is 2. Squared deviations are 1, 0 and 1. Sample variance is 2/(3−1)=1 and standard deviation is 1. Actual Yield has a standard deviation of about $696.50. The familiar 68% within one standard deviation rule requires an approximately normal distribution, which Yield does not have."
+        }
+      },
+      {
+        "label": {
+          "zh": "IQR 怎样找异常",
+          "en": "How IQR flags unusual values"
+        },
+        "text": {
+          "zh": "Q1 是第 25 百分位，Q3 是第 75 百分位，IQR = Q3−Q1。箱线图通常把低于 Q1−1.5×IQR 或高于 Q3+1.5×IQR 的值标出来。这是调查线索，不是“错误数据”的证明。很赚钱的真实客户也可能在界限之外。",
+          "en": "Q1 and Q3 are the 25th and 75th percentiles. IQR = Q3−Q1. Boxplots commonly flag values below Q1−1.5×IQR or above Q3+1.5×IQR. A flag is a reason to investigate, not proof of an error. A genuinely profitable customer can be an outlier."
+        }
+      },
+      {
+        "label": {
+          "zh": "本作业怎么处理",
+          "en": "Our treatment"
+        },
+        "text": {
+          "zh": "保留原始的 10,000 行及所有原始盈利结果。聚类时只把 Income 和 No_Trans 的上端压到各自第 99 百分位：5,375.11 和 702.04，再标准化。这样减少极端点对距离的支配。回归另做异常值敏感性比较，测试集真实结果始终不改。负 Yield 是题目允许的，不因负数而删除。",
+          "en": "We retain all 10,000 source rows and original outcomes. For clustering only, Income and No_Trans are upper-capped at their 99th percentiles, 5,375.11 and 702.04, before standardisation. This reduces extreme-distance dominance. Regression outlier alternatives are sensitivity checks, and test outcomes remain unchanged. Negative Yield is explicitly valid."
+        }
+      },
+      {
+        "label": {
+          "zh": "自测",
+          "en": "Check yourself"
+        },
+        "text": {
+          "zh": "截尾是否等于删除客户？不是。这里客户仍保留，只是在聚类使用的副本中限制两个变量的上端值。",
+          "en": "Does capping remove customers? No. It changes the upper values of two clustering inputs in a working copy while retaining the records."
+        }
+      }
+    ],
+    "figure": null
+  },
+  {
+    "title": {
+      "zh": "Income = 0：为什么不能随便填补",
+      "en": "Income = 0: why automatic replacement is risky"
+    },
+    "source": "Requirement, Part 1.2; W3 slide 4; tables/01_zero_income_profile.csv",
+    "blocks": [
+      {
+        "label": {
+          "zh": "先区分两个词",
+          "en": "Separate two ideas"
+        },
+        "text": {
+          "zh": "缺失值是“不知道”，零值是“记录为 0”。本数据没有显式 NA，但这不等于每个零都是真实零收入。题目已经提示零可能混合真实零、未填写或未更新等情况。",
+          "en": "Missing means unknown. Zero means that the recorded value is zero. The file has no explicit NA values, but this does not prove that every zero is genuine. The brief explicitly warns that zeros may mix real zero income with unreported or outdated information."
+        }
+      },
+      {
+        "label": {
+          "zh": "一步一步查",
+          "en": "Investigate step by step"
+        },
+        "text": {
+          "zh": "先数有多少零，再比较这些客户的交易、产品和价值，并观察不同年龄组的零值比例。共有 1,689 条 Income=0，占 16.89%；其中 1,576 条仍有交易，约占零收入记录的 93.31%。交易活跃说明这些客户仍与银行往来，但不能反推他们一定有工资。",
+          "en": "First count zeros, then compare activity, products and value, and inspect zero rates across ages. There are 1,689 zeros, or 16.89% of records. Of these, 1,576 still have transactions, approximately 93.31% of zero-income records. Activity shows ongoing banking use, but does not establish earned income."
+        }
+      },
+      {
+        "label": {
+          "zh": "实际差异",
+          "en": "What we observe"
+        },
+        "text": {
+          "zh": "零收入组平均 CLV 约 $731.67，正收入组约 $2,176.25。这个差异可能同时反映客户特征和旧 CLV 公式使用收入的方式。因此不能把它直接解释成“零收入导致低价值”。",
+          "en": "Mean CLV is about $731.67 for zero-income records and $2,176.25 for positive-income records. This difference can reflect customer characteristics and the old formula’s use of income. It does not establish that zero income causes lower value."
+        }
+      },
+      {
+        "label": {
+          "zh": "最终决定与敏感性",
+          "en": "Decision and sensitivity"
+        },
+        "text": {
+          "zh": "主分析保留记录值，并做替代处理：把零暂时当未知再填补、或不使用 Income。不同处理会改变部分分群，所以零收入问题确实重要。填补只是比较假设，不是恢复了真实收入。业务建议是核实来源与更新时间，而不是在原始文件里把 0 全部改掉。",
+          "en": "The primary analysis preserves recorded zeros. Alternatives temporarily treat them as unknown and impute them, or omit Income. Some cluster assignments change, so the issue matters. Imputation tests an assumption; it does not recover the truth. The practical action is to verify sources and update dates rather than overwrite all zeros."
+        }
+      },
+      {
+        "label": {
+          "zh": "自测",
+          "en": "Check yourself"
+        },
+        "text": {
+          "zh": "为什么不直接用全体平均收入替换 0？因为这会把“可能真实为零”和“未知”的人都强行变成平均客户，并影响距离及价值解释。",
+          "en": "Why not replace every zero with the overall mean? That would force genuinely zero and unknown-income customers to look average, affecting distances and interpretation."
+        }
+      }
+    ],
+    "figure": null
+  },
+  {
+    "title": {
+      "zh": "z-score：把不同单位放到共同尺度",
+      "en": "Z-scores: putting different units on a common scale"
+    },
+    "source": "W3 slides 33–35; W7 slide 16; R/02_clusters.R",
+    "blocks": [
+      {
+        "label": {
+          "zh": "为什么需要它",
+          "en": "Why is it needed?"
+        },
+        "text": {
+          "zh": "k-means 要计算客户之间的距离。收入可能差几千，产品数通常只差 1 或 2。如果直接计算距离，金额变量会因为数值单位大而压过产品数，即使产品数在业务上很重要。",
+          "en": "K-means calculates distances between customers. Income may differ by thousands, while product counts differ by one or two. Without rescaling, currency units can dominate distances even when product ownership is important."
+        }
+      },
+      {
+        "label": {
+          "zh": "公式与三个步骤",
+          "en": "Formula and three steps"
+        },
+        "text": {
+          "zh": "z = (x−均值)/标准差。第一步减均值，看你高出或低于中心多少；第二步除以标准差，换成“几个标准差”；第三步解释正负：z=0 在均值，z=1 高一个标准差，z=−1 低一个标准差。负 z 值不代表原始收入是负数。",
+          "en": "z = (x−mean)/standard deviation. First subtract the mean to measure distance from the centre. Then divide by standard deviation to express that difference in standard-deviation units. A z-score of 0 is at the mean, +1 is one standard deviation above it and −1 is one below. A negative z-score does not imply negative original income."
+        }
+      },
+      {
+        "label": {
+          "zh": "课堂的例子",
+          "en": "The classroom example"
+        },
+        "text": {
+          "zh": "W3 的例子：收入均值 3,000、标准差 1,500，收入 4,500 的 z=(4,500−3,000)/1,500=1。年龄均值 30、标准差 15，年龄 45 的 z=(45−30)/15=1。两者都高于各自均值一个标准差，尽管原始单位不同。",
+          "en": "W3 uses mean income 3,000 and standard deviation 1,500. Income of 4,500 therefore has z=1. Mean age 30 and standard deviation 15 make age 45 also z=1. Both are one standard deviation above their own means despite having different units."
+        }
+      },
+      {
+        "label": {
+          "zh": "本作业应用",
+          "en": "Our application"
+        },
+        "text": {
+          "zh": "对处理后的 Tot_Prod、Income、No_Trans、Age 四列分别使用 R 的 scale()。这里 Income 和 No_Trans 的均值及标准差来自截尾后的副本，而不是原始全范围值。标准化不会使偏斜分布自动变正态，也不会消除变量之间的相关性。画像表仍用原始单位，方便业务理解。",
+          "en": "We apply R’s scale() to Tot_Prod, Income, No_Trans and Age. Income and No_Trans use the capped working values when calculating their means and standard deviations. Standardisation does not make a skewed variable normal or remove correlations. Cluster profiles return to original units for interpretation."
+        }
+      },
+      {
+        "label": {
+          "zh": "自测",
+          "en": "Check yourself"
+        },
+        "text": {
+          "zh": "z-score、卡方和 R² 是同一个东西吗？不是。z-score 是尺度转换；卡方是类别关联检验统计量；R² 是回归误差相对基准的指标。",
+          "en": "Are a z-score, chi-square and R² the same thing? No. A z-score rescales a value, chi-square assesses categorical association, and R² compares regression errors with a reference."
+        }
+      }
+    ],
+    "figure": null
+  },
+  {
+    "title": {
+      "zh": "双变量分析：相关关系是什么",
+      "en": "Bivariate analysis: understanding correlation"
+    },
+    "source": "W6 slides 19–24; W4 slides 3–9; tables/01_correlations_tests.csv",
+    "blocks": [
+      {
+        "label": {
+          "zh": "为什么做",
+          "en": "Why do this?"
+        },
+        "text": {
+          "zh": "单变量只看一列；双变量把两列放在一起看。我们要知道产品数、交易、收入和年龄分别怎样与 CLV 联系，从而理解数据、选择模型变量，也识别容易重复的信息。",
+          "en": "Univariate analysis studies one variable; bivariate analysis studies two together. We examine how products, transactions, income and age each relate to CLV. This guides interpretation and variable selection and reveals overlapping information."
+        }
+      },
+      {
+        "label": {
+          "zh": "r 怎样读",
+          "en": "How to read r"
+        },
+        "text": {
+          "zh": "Pearson 相关系数 r 在 −1 到 +1 之间。正数表示两者倾向同升同降，负数表示一个高时另一个倾向低；绝对值越接近 1，直线关系越强。r 接近 0 只说明直线关系弱，并不排除弯曲关系。相关不说明谁导致谁。",
+          "en": "Pearson’s correlation r ranges from −1 to +1. Positive values indicate that variables tend to increase together; negative values indicate opposite movement. Values near either end represent a stronger straight-line relationship. Near-zero r does not exclude a curved relationship. Correlation alone does not identify causation."
+        }
+      },
+      {
+        "label": {
+          "zh": "我们的数值",
+          "en": "Our numbers"
+        },
+        "text": {
+          "zh": "Income 与 CLV 的 Pearson r 为 0.777；No_Trans 为 0.653；Tot_Prod 为 0.458；Age 只有 0.054。年龄的图却显示中年记录 CLV 较高，因此不能只看一个很小的 r 就说年龄完全无关。",
+          "en": "Pearson correlations with CLV are 0.777 for Income, 0.653 for No_Trans, 0.458 for Tot_Prod and only 0.054 for Age. Yet the age plot shows higher recorded CLV in middle age. The small overall linear correlation does not make age irrelevant."
+        }
+      },
+      {
+        "label": {
+          "zh": "为什么另算 Spearman",
+          "en": "Why also use Spearman?"
+        },
+        "text": {
+          "zh": "Spearman 先把数值换成排名，关注是否总体单调变化，对极端数值的大小较不敏感。例如 Income 与 CLV 的 Spearman 为 0.861。Yield 与 CLV 的 Pearson 为 0.562，而 Spearman 只有 0.241，提醒我们极端值影响了直线相关。Spearman 是为本数据长尾问题增加的补充方法。",
+          "en": "Spearman correlation uses ranks and assesses monotonic association, reducing sensitivity to extreme magnitudes. Income–CLV Spearman correlation is 0.861. Yield–CLV Pearson is 0.562, while Spearman is 0.241, signalling that extreme magnitudes affect the linear summary. This is an extension added for the long-tailed data."
+        }
+      },
+      {
+        "label": {
+          "zh": "自测",
+          "en": "Check yourself"
+        },
+        "text": {
+          "zh": "收入与 CLV 相关很高是否证明加收入能创造银行价值？不能。CLV 可能本来就由收入参与计算，也有其他未观察因素。",
+          "en": "Does high income–CLV correlation prove that increasing income creates bank value? No. Income may already be part of the old CLV formula, and other factors are unobserved."
+        }
+      }
+    ],
+    "figure": null
+  },
+  {
+    "title": {
+      "zh": "p 值、假设和置信区间",
+      "en": "Hypotheses, p-values and confidence intervals"
+    },
+    "source": "W4 slides 11–17; W8 slides 24–26; supplemental precise interpretation",
+    "blocks": [
+      {
+        "label": {
+          "zh": "先提出可检验问题",
+          "en": "Start with a testable question"
+        },
+        "text": {
+          "zh": "H0（零假设）通常是“没有差异”或“没有关联”；H1（备择假设）表示有差异或有关联。例如 H0：30 岁以下与其他客户的平均记录 CLV 相同。我们用数据衡量它与 H0 是否相容，而不是用一个数字证明某种故事。",
+          "en": "A null hypothesis H0 often states no difference or no association. The alternative H1 states a difference or association. For example, H0 can say that mean recorded CLV is equal for under-30 and other customers. We assess compatibility with H0 rather than prove a story."
+        }
+      },
+      {
+        "label": {
+          "zh": "p 值的准确含义",
+          "en": "The precise meaning of a p-value"
+        },
+        "text": {
+          "zh": "假设 H0 和检验前提成立，p 值是得到当前或更极端检验统计量的概率。p<0.05 常作为反对 H0 的证据。它不是“H0 为真的概率”，也不是“结果有 95% 概率正确”。p≥0.05 也不证明两组完全一样，只说明当前检验没有足够证据。这里用精确定义补充课堂的简写表达。",
+          "en": "Assuming H0 and the test assumptions are true, the p-value is the probability of a statistic at least as extreme as observed. A p-value below 0.05 is commonly treated as evidence against H0. It is not the probability that H0 is true, nor a 95% probability that the result is correct. A large p-value does not prove equality. This precise definition qualifies classroom shorthand."
+        }
+      },
+      {
+        "label": {
+          "zh": "大样本的陷阱",
+          "en": "The large-sample trap"
+        },
+        "text": {
+          "zh": "本作业有 10,000 条记录，小差异也可能产生很小的 p 值。因此还要看差异金额、相关强度、置信区间和业务意义。Age 与 CLV 的 r 只有 0.054，却仍有很小的 p 值。统计显著不能代替“差异大不大、有用没用”。",
+          "en": "With 10,000 records, small effects can produce tiny p-values. Also inspect dollar differences, association strength, confidence intervals and practical relevance. Age–CLV correlation is only 0.054 despite a small p-value. Statistical significance does not establish a large or useful effect."
+        }
+      },
+      {
+        "label": {
+          "zh": "95% 置信区间",
+          "en": "A 95% confidence interval"
+        },
+        "text": {
+          "zh": "它反映估计的不确定性。用同样方法反复抽取适当样本并构建区间，长期约 95% 的区间会覆盖真实参数。不能说 95% 的客户都落在“均值差的置信区间”里。我们的年轻组与其他组 CLV 均值差约 −$833，区间约 [−$879, −$786]；这描述均值差的精度，不是真实未来价值误差。",
+          "en": "A confidence interval describes uncertainty in an estimated parameter. Under repeated appropriate sampling, about 95% of intervals constructed this way would cover the true parameter. It is not a range containing 95% of customers. The under-30 mean CLV difference is about −$833, with interval [−$879, −$786]. This concerns the difference in recorded means, not future-value error."
+        }
+      },
+      {
+        "label": {
+          "zh": "自测",
+          "en": "Check yourself"
+        },
+        "text": {
+          "zh": "p=0 是否表示百分之百确定？不是。软件可能因为数值太小而显示为 0；正文应写 p<0.001 等，而不是宣称确定。",
+          "en": "Does a printed p=0 mean certainty? No. Extremely small values can round or underflow to zero. Report a threshold such as p<0.001 rather than certainty."
+        }
+      }
+    ],
+    "figure": null
+  },
+  {
+    "title": {
+      "zh": "卡方检验：两个类别是否有关",
+      "en": "Chi-square: are two categorical variables associated?"
+    },
+    "source": "W4 slides 21–23; tables/01_zero_income_chisquare.csv",
+    "blocks": [
+      {
+        "label": {
+          "zh": "什么问题用它",
+          "en": "When to use it"
+        },
+        "text": {
+          "zh": "本作业的问题是“不同年龄组，Income=0 的比例是否相同”。年龄组是类别，是否零收入也是类别，因此适合交叉表和卡方检验。这里不用卡方直接比较连续收入的均值。",
+          "en": "Our question is whether zero-income rates differ across age bands. Age band and zero-income status are both categorical, so a cross-tabulation and chi-square test fit the question. This test is not a direct comparison of continuous income means."
+        }
+      },
+      {
+        "label": {
+          "zh": "观察值与期望值",
+          "en": "Observed and expected counts"
+        },
+        "text": {
+          "zh": "观察值 O 是实际人数。期望值 E 是假定两变量独立时的人数，E=(该行总人数×该列总人数)/总人数。教学例子：100 人中 40 人年轻、20 人收入为零，则独立时预计年轻且零收入的有 40×20/100=8 人。若实际 15 人，该格偏差为 7。",
+          "en": "Observed count O is the number actually recorded. Under independence, expected count E=(row total×column total)/grand total. In a teaching example with 100 people, 40 young people and 20 zero-income records, independence predicts 40×20/100=8 young zero-income records. If 15 are observed, the discrepancy is 7."
+        }
+      },
+      {
+        "label": {
+          "zh": "为什么有 square",
+          "en": "Why the square?"
+        },
+        "text": {
+          "zh": "卡方统计量 χ² = 各格 (O−E)²/E 的总和。上例这一格贡献 (15−8)²/8=6.125。平方让正负偏差不互相抵消；除以 E 考虑格子规模。把所有格贡献加总后，再按自由度判断偏差是否异常大。不能只用这一格给整张表下结论。",
+          "en": "The statistic χ² sums (O−E)²/E over all cells. That example cell contributes 49/8=6.125. Squaring prevents cancellation and dividing by E accounts for cell size. The total, interpreted with its degrees of freedom, assesses departure from independence. One cell alone is not the entire test."
+        }
+      },
+      {
+        "label": {
+          "zh": "我们的结果",
+          "en": "Our result"
+        },
+        "text": {
+          "zh": "使用 6 个年龄组与 2 种零收入状态，自由度 (6−1)×(2−1)=5。χ²=294.70，p<0.001，最小期望人数 81.24，大于课堂常用的 5。Cramér’s V=0.172，用于描述关联强度：统计证据明显，但不能说年龄能决定一个人的收入记录状态。",
+          "en": "With six age bands and two income-status categories, degrees of freedom are (6−1)(2−1)=5. χ²=294.70 and p<0.001. The smallest expected count is 81.24, above the classroom guideline of 5. Cramér’s V=0.172 describes the association’s strength. Clear statistical evidence does not mean age determines an individual’s income-record status."
+        }
+      },
+      {
+        "label": {
+          "zh": "自测",
+          "en": "Check yourself"
+        },
+        "text": {
+          "zh": "卡方告诉我们“年轻导致收入为零”吗？没有。它检验关联，没有建立因果顺序，也没有解释零值记录的来源。",
+          "en": "Does chi-square establish that youth causes zero income? No. It tests association without establishing causal order or explaining the origin of zero records."
+        }
+      }
+    ],
+    "figure": null
+  },
+  {
+    "title": {
+      "zh": "t 检验和 ANOVA：比较组均值",
+      "en": "T-tests and ANOVA: comparing group means"
+    },
+    "source": "W4 slides 25–27; W6 slides 9–16; tables/01_welch_two_group_tests.csv; tables/01_age_band_anova.csv",
+    "blocks": [
+      {
+        "label": {
+          "zh": "为什么分两种",
+          "en": "Why two methods?"
+        },
+        "text": {
+          "zh": "两组的连续结果均值差，可以用两样本 t 检验。超过两组时，用 ANOVA 先问“所有组均值是否都相同”。否则每两组做一次检验，会增加碰巧发现显著差异的机会。",
+          "en": "A two-sample t-test compares a continuous outcome between two groups. With more groups, ANOVA first tests whether all group means are equal. Running many pairwise tests without adjustment increases the chance of accidental significant findings."
+        }
+      },
+      {
+        "label": {
+          "zh": "先看年轻组",
+          "en": "Start with the younger group"
+        },
+        "text": {
+          "zh": "30 岁以下 1,765 人的平均 CLV 为 $1,246.47，其余 8,235 人为 $2,079.24。年轻组减其他组 = −$832.77。Welch t 检验 p<0.001。Welch 允许两组方差不同，适合本数据明显不均匀的分布。它仍要求合理的独立性，且并非不怕极端值。",
+          "en": "The 1,765 under-30 records have mean CLV $1,246.47, compared with $2,079.24 for 8,235 other records. The difference is −$832.77, with Welch-test p<0.001. Welch’s method permits unequal group variances. It still relies on reasonable independence and is not immune to extreme values."
+        }
+      },
+      {
+        "label": {
+          "zh": "再看六个年龄组",
+          "en": "Then compare six age bands"
+        },
+        "text": {
+          "zh": "六个年龄组的 CLV Welch ANOVA F=269.15，p<0.001，表示至少一个均值不同，不表示每一对都不同。普通 ANOVA 的 η²=0.075，描述年龄组间差异约占总 CLV 变异的 7.5%；这是描述性份额，不是因果解释比例。",
+          "en": "Across six age bands, Welch ANOVA gives F=269.15 and p<0.001. At least one mean differs; this does not say every pair differs. The ordinary ANOVA descriptive η² is 0.075, so between-band differences account for about 7.5% of total CLV variation. This is not a causal share."
+        }
+      },
+      {
+        "label": {
+          "zh": "为什么增加检验步骤",
+          "en": "Why add safeguards?"
+        },
+        "text": {
+          "zh": "Brown–Forsythe 检查组内波动是否相近，本数据提示方差不齐，所以重点看 Welch 结果。事后两两比较使用 Holm 调整，降低一组检验内误报的风险。课堂提供 t 检验和 ANOVA 主线；Welch、Holm 是针对当前数据问题的补充。",
+          "en": "The Brown–Forsythe check indicates unequal variances, so Welch results receive emphasis. Post-hoc pairwise comparisons use Holm adjustment to control false positives within the tested family. The course provides the t-test and ANOVA framework; Welch and Holm address specific features of these data."
+        }
+      },
+      {
+        "label": {
+          "zh": "自测",
+          "en": "Check yourself"
+        },
+        "text": {
+          "zh": "平均 CLV 显著较低是否等于旧公式低估了年轻人？不等于。我们比较的是旧公式输出；是否低估需要真实未来价值作参照。",
+          "en": "Does significantly lower mean CLV prove underestimation of younger customers? No. The comparison concerns old formula outputs. Underestimation requires an external reference such as observed future value."
+        }
+      }
+    ],
+    "figure": null
+  },
+  {
+    "title": {
+      "zh": "k-means：让相似客户靠在一起",
+      "en": "K-means: grouping customers who look similar"
+    },
+    "source": "W7 slides 11–20; R/02_clusters.R",
+    "blocks": [
+      {
+        "label": {
+          "zh": "与回归的不同",
+          "en": "How it differs from regression"
+        },
+        "text": {
+          "zh": "聚类是无监督学习：事先没有“正确群组”答案。k 是希望分成的组数，means 指各组中心用均值表示。它寻找组内相似、组间较不同的分法。这里不把 Yield 和 CLV 输入算法，避免先按利润分组再宣布群组利润不同。",
+          "en": "Clustering is unsupervised: there are no known correct group labels. k is the requested number of groups and means refers to their average centres. K-means seeks compact groups. Yield and CLV are excluded from the inputs so that the grouping is not constructed directly from the outcomes later used to profile it."
+        }
+      },
+      {
+        "label": {
+          "zh": "算法怎样运行",
+          "en": "How the algorithm works"
+        },
+        "text": {
+          "zh": "先给 k 个初始中心；把每个人分给最近的中心；重新计算每组平均位置；再分配、再计算，直到稳定。目标是减少组内平方距离总和。平方距离意味着离中心特别远的点影响更大，所以前面要处理极端值及尺度。",
+          "en": "Start with k initial centres. Assign each record to its nearest centre, recalculate the group averages, and repeat until stable. The objective is to reduce within-cluster squared distances. Very distant observations receive disproportionate weight, which explains the earlier scaling and outlier work."
+        }
+      },
+      {
+        "label": {
+          "zh": "我们的四个输入",
+          "en": "Our four inputs"
+        },
+        "text": {
+          "zh": "Tot_Prod 代表关系广度，Income 代表记录收入，No_Trans 代表活跃程度，Age 代表生命周期。Age 与 Cat_Age 由同一信息产生，两个一起放入会重复强调年龄，因此只让 Age 参与距离。Cat_Age 留在画像表。样本中 Cat_Age=2 对应 18–35 岁，依次到 6 对应 80–99 岁。",
+          "en": "Tot_Prod represents relationship breadth, Income recorded income, No_Trans activity, and Age life stage. Age and Cat_Age repeat the same underlying information, so only Age enters the distance calculation. Cat_Age remains a profiling variable. Observed category 2 covers ages 18–35, rising to category 6 for ages 80–99."
+        }
+      },
+      {
+        "label": {
+          "zh": "随机起点为什么重要",
+          "en": "Why starting points matter"
+        },
+        "text": {
+          "zh": "同一数据可能因起点不同落在不同局部解。每个 k 运行 50 个起点，并固定随机种子以便复现。最终另换种子比较稳定性。固定种子让结果重复，不证明结果正确。群号 C1–C6 只是标签，不代表优劣排名。",
+          "en": "Different starting centres can lead to different local solutions. Each k uses 50 starts and a fixed random seed for reproducibility. Additional seeds test stability. A fixed seed makes a result repeatable, not necessarily correct. C1–C6 are labels rather than quality rankings."
+        }
+      },
+      {
+        "label": {
+          "zh": "自测",
+          "en": "Check yourself"
+        },
+        "text": {
+          "zh": "算法必须给每个人分一组，是否说明每个人都很适合自己的组？不说明。边界客户可能同时接近几个组，需要 silhouette 等指标观察重叠。",
+          "en": "Does assigning everyone to a cluster prove that everyone fits well? No. Boundary records may be close to several groups, which is why separation diagnostics matter."
+        }
+      }
+    ],
+    "figure": null
+  },
+  {
+    "title": {
+      "zh": "为什么最终选择六群",
+      "en": "Why the final solution has six clusters"
+    },
+    "source": "W7 slides 18–21; tables/02_k_comparison.csv; tables/02_shortlist_profile_comparison.csv",
+    "blocks": [
+      {
+        "label": {
+          "zh": "silhouette 的直觉",
+          "en": "The intuition behind silhouette"
+        },
+        "text": {
+          "zh": "对某个客户，a 是它与本群其他客户的平均距离；b 是它与最近的其他群的平均距离。s=(b−a)/max(a,b)。接近 1 表示更靠近本群，接近 0 表示在边界，负数表示可能更靠近另一群。它不是预测准确率，也不是正确分群的概率。",
+          "en": "For a record, a is its mean distance to other members of its own cluster. b is the smallest mean distance to another cluster. Silhouette s=(b−a)/max(a,b). Near 1 suggests a good fit, near 0 suggests a boundary, and negative values suggest closer affinity to another cluster. It is not prediction accuracy or a probability of correct membership."
+        }
+      },
+      {
+        "label": {
+          "zh": "怎么比较 k",
+          "en": "How we compare k"
+        },
+        "text": {
+          "zh": "先在相同的 2,500 条记录上比较 k=2 到 8，避免每次抽样不同干扰比较。再对入围的两群和六群，用全部 10,000 条记录计算精确分数。两群为 0.3205，六群为 0.3163，相差约 0.0042。",
+          "en": "We compare k=2 through 8 using the same 2,500-record silhouette sample. Then we calculate full-data silhouettes for the shortlisted two- and six-cluster solutions. Their exact scores are 0.3205 and 0.3163, a difference of about 0.0042."
+        }
+      },
+      {
+        "label": {
+          "zh": "课堂原则与本次取舍",
+          "en": "The classroom principle and our tradeoff"
+        },
+        "text": {
+          "zh": "W7 第 21 页提醒，分数很接近时通常选简单方案。两群因此是合理的备选。这里根据题目要求进一步比较画像，六群保留了“单产品高活跃”和“年长、当前利润较高”等差异，最小群 470 人，也有实际规模。选择六群是解释与执行复杂度之间的判断，不是声称其统计分数更高。",
+          "en": "W7 slide 21 favours simpler solutions when scores are close, so two clusters remain a reasonable alternative. The assignment also asks for profile-based selection. Six clusters preserve meaningful single-product activity and older-customer patterns, with 470 records in the smallest group. The choice trades complexity for richer profiles; it does not claim a better silhouette score."
+        }
+      },
+      {
+        "label": {
+          "zh": "限制与稳定性",
+          "en": "Limitations and stability"
+        },
+        "text": {
+          "zh": "六群平均 silhouette 约 0.316，按课堂属于较弱、存在重叠的结构；3.1% 的记录为负 silhouette。换随机种子的 ARI 约 0.995–1.000，说明固定处理下稳定；换收入处理方式 ARI 可降至约 0.526。ARI=1 表示两次分组完全一致，接近 0 表示与随机一致水平相近。这些稳定性检查不能证明存在六种天然客户。",
+          "en": "Mean silhouette of about 0.316 represents weak, overlapping structure under the course guide; 3.1% of full-data silhouettes are negative. Seed-change ARIs are approximately 0.995–1.000, but preprocessing changes can reduce ARI to about 0.526. ARI=1 means identical partitions and around 0 means chance-level agreement. Stability does not prove six natural customer types."
+        }
+      },
+      {
+        "label": {
+          "zh": "自测",
+          "en": "Check yourself"
+        },
+        "text": {
+          "zh": "能否说六群“优于”两群？应说明优在哪里：画像更细，统计分离略低，管理成本更高。避免没有条件的优劣判断。",
+          "en": "Can we simply say six clusters are better? Specify the criterion: richer profiles, slightly lower separation, and greater implementation complexity."
+        }
+      }
+    ],
+    "figure": null
+  },
+  {
+    "title": {
+      "zh": "如何读懂六个客户群",
+      "en": "Reading the six customer profiles"
+    },
+    "source": "W7 slides 24–30; tables/02_cluster_profiles.csv",
+    "blocks": [
+      {
+        "label": {
+          "zh": "读表顺序",
+          "en": "A useful reading order"
+        },
+        "text": {
+          "zh": "先看人数，判断是否只是几个极端点；再看原始单位的年龄、产品数、收入和交易；最后看没有参与分组的 Yield 与 CLV。金额均值回答平均贡献，中位数回答典型位置，亏损比例回答多少客户为负利润。每个群里仍有差异。",
+          "en": "Start with group size, then read age, products, income and transactions in original units. Finally inspect Yield and CLV, which did not enter clustering. Means describe average contribution, medians describe the middle record, and loss rates describe the share with negative profit. Within-group differences remain."
+        }
+      },
+      {
+        "label": {
+          "zh": "从具体群体理解",
+          "en": "Interpret concrete groups"
+        },
+        "text": {
+          "zh": "C1 有 2,586 人，平均年龄约 33 岁、只有 1 个产品，平均 CLV 约 $934，39.7% 的记录收入为零。C3 有 2,006 人，同样只有 1 个产品，却平均有 372 次交易、CLV 约 $2,228。两群都属于单产品客户，但活跃程度不同。",
+          "en": "C1 contains 2,586 records, averages about age 33 and one product, has mean CLV about $934, and a 39.7% zero-income rate. C3 contains 2,006 records and also one product, but averages 372 transactions and CLV about $2,228. Similar product counts hide different activity patterns."
+        }
+      },
+      {
+        "label": {
+          "zh": "当前与长期排序",
+          "en": "Current and lifetime rankings"
+        },
+        "text": {
+          "zh": "C5 的平均记录 CLV 最高，约 $4,741；C1 最低，约 $934。当前平均 Yield 最高的是 C6，约 $287；最低是 C1，约 $49。C6 占 23.77% 的客户，却贡献约 43.0% 的总 Yield。不要把“平均最高”和“总额最高”当成同一个比较。",
+          "en": "C5 has the highest mean recorded CLV, about $4,741, and C1 the lowest, about $934. C6 has the highest mean current Yield, about $287, while C1 has the lowest, about $49. C6 represents 23.77% of records and about 43.0% of total Yield. Highest average and highest total are separate comparisons."
+        }
+      },
+      {
+        "label": {
+          "zh": "为何还要看中位数",
+          "en": "Why the median matters again"
+        },
+        "text": {
+          "zh": "C3 平均 Yield 约 $58，但中位数是 −$25，56.2% 的客户亏损。均值正不代表多数客户盈利。C1 的 Yield 中位数也是 −$25。群名是帮助记忆的描述，不应用来给个人贴固定标签。",
+          "en": "C3 has mean Yield around $58, but median Yield is −$25 and 56.2% of records show losses. A positive mean does not imply that most customers are profitable. C1 also has median Yield −$25. Descriptive names support interpretation; they should not become permanent labels for individuals."
+        }
+      },
+      {
+        "label": {
+          "zh": "自测",
+          "en": "Check yourself"
+        },
+        "text": {
+          "zh": "保留客户建议只看 C5 可以吗？不够。C5 在旧 CLV 上高，而 C6 在当前盈利上突出，目标不同会影响优先级。",
+          "en": "Is it enough to focus retention only on C5? No. C5 leads recorded CLV, whereas C6 stands out in current profit. Priorities depend on the objective."
+        }
+      }
+    ],
+    "figure": null
+  },
+  {
+    "title": {
+      "zh": "线性回归：把几个条件一起考虑",
+      "en": "Linear regression: considering several characteristics together"
+    },
+    "source": "W8 slides 3, 20–26, 32–33; tables/03_primary_coefficients_HC3.csv",
+    "blocks": [
+      {
+        "label": {
+          "zh": "为什么用回归",
+          "en": "Why regression?"
+        },
+        "text": {
+          "zh": "双变量只看一对关系。回归把多个变量一起放入，回答“在其他已纳入变量相同的情况下，某特征与 CLV 有什么关联”。我们选择课堂的线性回归，因为结果易解释、目标是金额，并与简单年龄非线性方案比较后保留较简洁模型。",
+          "en": "Bivariate analysis studies one pair. Regression considers several variables together and asks how one feature relates to CLV while holding the included others fixed. We use classroom linear regression because the outcome is numeric and coefficients are interpretable, retaining a simple model after comparing age alternatives."
+        }
+      },
+      {
+        "label": {
+          "zh": "读懂公式",
+          "en": "Read the formula"
+        },
+        "text": {
+          "zh": "预测 CLV ≈ −272.73 + 652.27×Tot_Prod + 4.9733×No_Trans + 8.9427×(Age−45)。Age−45 只是把 45 岁设为年龄参考点，属于中心化，没有除以标准差，因此不是 z-score。主模型排除 Income 和 Yield，降低只是重构旧 CLV 公式的风险。",
+          "en": "Predicted CLV ≈ −272.73 + 652.27×Tot_Prod + 4.9733×No_Trans + 8.9427×(Age−45). Subtracting 45 centres age; it does not divide by a standard deviation and is therefore not a z-score. The primary model excludes Income and Yield to reduce the risk of merely reconstructing the old CLV formula."
+        }
+      },
+      {
+        "label": {
+          "zh": "代入一个例子",
+          "en": "Substitute a worked example"
+        },
+        "text": {
+          "zh": "教学客户有 1 个产品、200 次交易、45 岁：预测值 = −272.73 + 652.27 + 4.9733×200 + 0 ≈ $1,374.20。保持交易和年龄相同，产品数从 1 变成 2，模型预测值增加约 $652.27。这是已观察关系的模型比较，不是推销一个产品就一定赚到的钱。",
+          "en": "For a teaching customer with one product, 200 transactions and age 45, the prediction is approximately −272.73+652.27+4.9733×200=$1,374.20. Holding transactions and age fixed, a second product increases the model prediction by about $652.27. This is a conditional association, not a guaranteed return from selling a product."
+        }
+      },
+      {
+        "label": {
+          "zh": "系数大小怎么比较",
+          "en": "Comparing coefficients"
+        },
+        "text": {
+          "zh": "不能因为 652 比 4.97 大，就说产品一定比交易重要：一个单位的产品与一次交易不是同一尺度。按分块 partial R²，交易贡献约 0.371、产品约 0.129、年龄约 0.025。它衡量变量在其他已纳入变量之外增加的解释，不应相加当总 R²，也不是因果贡献。",
+          "en": "Do not compare 652 with 4.97 as if units were equivalent: a product and a transaction are different units. Block partial R² values are about 0.371 for transactions, 0.129 for products and 0.025 for age. These measure additional explanatory contribution conditional on other included variables, are not additive shares of total R², and are not causal effects."
+        }
+      },
+      {
+        "label": {
+          "zh": "自测",
+          "en": "Check yourself"
+        },
+        "text": {
+          "zh": "负截距是否说明模型预测所有客户亏损？不。截距对应产品和交易都为零、年龄 45 的组合，甚至不在本样本产品范围内；实际预测还要加其他项。",
+          "en": "Does a negative intercept imply negative predictions for all customers? No. It describes zero products, zero transactions and age 45, a combination outside the observed product range. Other terms contribute to actual predictions."
+        }
+      }
+    ],
+    "figure": null
+  },
+  {
+    "title": {
+      "zh": "训练集、测试集和交叉验证",
+      "en": "Training, testing and cross-validation"
+    },
+    "source": "W8 regression framework; supplemental validation; tables/03_partition_profiles.csv; tables/03_CV_model_comparison.csv",
+    "blocks": [
+      {
+        "label": {
+          "zh": "为什么不能只看原数据拟合",
+          "en": "Why not evaluate only on training data?"
+        },
+        "text": {
+          "zh": "把已看过的题反复练好，不代表会做新题。模型在训练资料上挑选系数，也可能记住噪声。测试集像暂时封存的考试题，用来评估模型对未参加训练的记录表现如何。",
+          "en": "Practising familiar questions does not guarantee success on new ones. A model fits coefficients on training data and may also fit noise. A held-out test set acts like exam questions kept aside to assess performance on unseen records."
+        }
+      },
+      {
+        "label": {
+          "zh": "实际怎样拆分",
+          "en": "Our actual split"
+        },
+        "text": {
+          "zh": "训练集 8,003 行，测试集 1,997 行。不是机械地按前 80% 和后 20% 切。我们按年龄状态分层，并让相同 Tot_Prod、No_Trans、Age 组合的记录留在同一边，避免同样主模型输入同时出现在训练和测试中。没有客户 ID，仍无法保证不同记录绝不来自同一客户。",
+          "en": "The training set has 8,003 rows and the test set 1,997. We stratify groups by under-30 status and keep identical Tot_Prod, No_Trans and Age patterns on the same side. This avoids sharing identical primary-model inputs across train and test. Without customer IDs, repeated people cannot be ruled out."
+        }
+      },
+      {
+        "label": {
+          "zh": "五折交叉验证",
+          "en": "Five-fold cross-validation"
+        },
+        "text": {
+          "zh": "只在训练集内部再分成五份。每次用四份训练、一份验证，轮流五次，汇总误差。比较年龄线性、二次项和 30 岁后折线等方案。最小 CV RMSE 约 $980.22，线性方案约 $983.11，只差约 0.3%，在事先记录的 1% 范围内，因此选择参数更少的线性方案。",
+          "en": "Within the training set, create five folds. Fit on four and validate on the remaining fold, rotating five times. We compare linear age, quadratic age and a hinge at 30. The best CV RMSE is about $980.22, versus $983.11 for the linear form. The difference is about 0.3%, within the recorded 1% simplicity rule, so we retain fewer parameters."
+        }
+      },
+      {
+        "label": {
+          "zh": "什么是数据泄漏",
+          "en": "What is leakage?"
+        },
+        "text": {
+          "zh": "泄漏是让本应未知的信息进入训练或选择过程，例如先用全部数据决定回归填补值，或看测试成绩后不断挑模型。这里回归敏感性方案的阈值来自训练集，测试结果不截尾。聚类是在全部数据上做的探索，未用于回归预测输入。测试表现也不等于时间向前的预测，因为资料没有时间轴。",
+          "en": "Leakage occurs when information that should be unknown influences fitting or selection, such as deriving regression imputations from all rows or repeatedly choosing models from test results. Sensitivity thresholds come from training data and test outcomes remain uncapped. Full-data clusters are exploratory and do not enter regression inputs. The split is not a future-time validation because dates are unavailable."
+        }
+      },
+      {
+        "label": {
+          "zh": "自测",
+          "en": "Check yourself"
+        },
+        "text": {
+          "zh": "把模型重新用全部 10,000 行拟合后，可以把其训练 R² 当原测试 R² 吗？不能。最终全数据拟合与保留测试评价是两个不同对象。",
+          "en": "Can the all-data refit’s training R² replace the held-out test R²? No. The final refit and the model used for held-out evaluation are different objects."
+        }
+      }
+    ],
+    "figure": null
+  },
+  {
+    "title": {
+      "zh": "R-square、MAE、RMSE 到底是什么意思",
+      "en": "What R-square, MAE and RMSE mean"
+    },
+    "source": "W8 slides 24–26; tables/03_primary_test_metrics.csv; tables/03_Yield_test_metrics.csv",
+    "blocks": [
+      {
+        "label": {
+          "zh": "先理解残差",
+          "en": "Start with an error"
+        },
+        "text": {
+          "zh": "残差或预测误差 = 实际值−预测值。教学例子：实际 100、200、300，预测 110、180、310，误差为 −10、20、−10。MAE 把误差取绝对值再平均，得到 40/3=13.33。RMSE 先平方再平均再开方，得到 sqrt(600/3)=14.14，所以它更惩罚大错误。",
+          "en": "Error is actual minus predicted. For teaching outcomes 100, 200 and 300 with predictions 110, 180 and 310, errors are −10, 20 and −10. MAE averages absolute errors: 40/3=13.33. RMSE squares first, averages, then takes the square root: sqrt(600/3)=14.14. RMSE penalises large errors more strongly."
+        }
+      },
+      {
+        "label": {
+          "zh": "R² 的公式与含义",
+          "en": "The R² formula and meaning"
+        },
+        "text": {
+          "zh": "R² = 1−SSE/SST。SSE 是模型平方误差总和；SST 是实际值相对其均值的平方偏差总和。上例 SSE=600，SST=20,000，所以 R²=0.97。意思是相对“总猜均值”，平方误差减少 97%，不是 97% 的预测完全正确，也不是金额误差只有 3%。",
+          "en": "R² = 1−SSE/SST. SSE sums squared prediction errors. SST sums squared deviations of outcomes from their mean. In the teaching example, SSE=600 and SST=20,000, giving R²=0.97. Squared error is 97% lower than the mean reference; this is not 97% exact predictions or a 3% dollar error."
+        }
+      },
+      {
+        "label": {
+          "zh": "实际结果怎么读",
+          "en": "Reading our actual results"
+        },
+        "text": {
+          "zh": "主 CLV 模型测试 MAE=$486.19，RMSE=$915.23，R²=0.528。其平方误差约比测试结果均值参照低 52.8%。实际可部署的基准使用训练均值，它的测试 RMSE=$1,332.33。两个参照要分清。RMSE 比 MAE 大很多，说明少数大误差仍重要。",
+          "en": "The primary CLV test MAE is $486.19, RMSE $915.23 and R² 0.528. Squared error is about 52.8% lower than the test-outcome-mean reference. The deployable baseline instead predicts the training mean and has test RMSE $1,332.33. Keep these references distinct. RMSE far above MAE signals consequential large errors."
+        }
+      },
+      {
+        "label": {
+          "zh": "训练 R² 与调整 R²",
+          "en": "Training and adjusted R²"
+        },
+        "text": {
+          "zh": "训练 R²=0.5067，调整 R²=0.5065。调整 R² 对参数数量作惩罚，避免仅因加变量就看似改善。常见有截距的最小二乘训练 R² 在 0 到 1；测试 R² 可以为负，表示比参照还差。Yield 模型测试 R² 只有 0.060，RMSE=$667.02，预测当前个体利润的能力有限。",
+          "en": "Training R² is 0.5067 and adjusted R² 0.5065. Adjusted R² penalises extra parameters. Ordinary least-squares training R² with an intercept lies between 0 and 1; test R² can be negative if predictions are worse than the reference. The Yield model has test R² only 0.060 and RMSE $667.02, indicating limited prediction of individual current profit."
+        }
+      },
+      {
+        "label": {
+          "zh": "自测",
+          "en": "Check yourself"
+        },
+        "text": {
+          "zh": "R²=0.528 能叫“52.8% 准确率”吗？不能。请改说“相对均值参照，解释或减少了约 52.8% 的平方变异／误差”，并同时报告金额误差。",
+          "en": "Can R²=0.528 be called 52.8% accuracy? No. Explain the reduction in squared error relative to the mean reference, and also report dollar errors."
+        }
+      }
+    ],
+    "figure": null
+  },
+  {
+    "title": {
+      "zh": "回归诊断：为什么跑完模型还不够",
+      "en": "Regression diagnostics: why fitting is not the finish"
+    },
+    "source": "W8 slides 27–30; tables/03_primary_diagnostics.csv; tables/03_outlier_sensitivity_metrics.csv",
+    "blocks": [
+      {
+        "label": {
+          "zh": "四张图逐个看",
+          "en": "Read the four plots"
+        },
+        "text": {
+          "zh": "Residuals vs Fitted：看误差是否出现弯曲或规律；Q–Q：看残差是否明显偏离近似正态形状；Scale–Location：看不同预测值附近的误差波动是否接近；Residuals vs Leverage：看是否有特殊位置且影响拟合的记录。残差应接近什么样，要结合模型假设理解，不能只看图好不好看。",
+          "en": "Residuals vs Fitted checks systematic patterns and curvature. Q–Q checks departures from an approximately normal error shape. Scale–Location checks whether error spread changes across fitted values. Residuals vs Leverage highlights unusual predictor combinations and potentially influential records. These plots assess assumptions, not visual attractiveness."
+        }
+      },
+      {
+        "label": {
+          "zh": "实际发现",
+          "en": "What we found"
+        },
+        "text": {
+          "zh": "CLV 残差严重右偏，偏度约 20.04；方差检查 p≈0.00021，提示误差波动不恒定。Cook’s distance 超过 4/n 的记录有 224 条，这是调查阈值，不是删除名单。不能因为样本大就忽略这些问题。",
+          "en": "CLV residuals are strongly right-skewed, with skewness about 20.04. The variance check gives p≈0.00021, suggesting unequal error variance. There are 224 records above the Cook’s-distance screening threshold 4/n. That threshold flags investigation rather than automatic deletion. A large sample does not erase these issues."
+        }
+      },
+      {
+        "label": {
+          "zh": "HC3 修了什么",
+          "en": "What HC3 addresses"
+        },
+        "text": {
+          "zh": "普通标准误依赖一些误差方差假设。HC3 是允许异方差的稳健标准误，用来重新计算系数不确定性。例如产品系数约 $652，95% HC3 区间约 [$613, $692]。HC3 不改变预测值，也没有让残差恢复正态，更不把关联变成因果。它是对本数据诊断问题有明确用途的补充。",
+          "en": "HC3 is a heteroscedasticity-robust standard error estimator. It adjusts coefficient uncertainty when error variance is unequal. The product coefficient is about $652, with a 95% HC3 interval around [$613, $692]. HC3 does not alter predictions, normalise residuals or establish causality. It is a targeted extension for the observed diagnostic problem."
+        }
+      },
+      {
+        "label": {
+          "zh": "VIF 和敏感性",
+          "en": "VIF and sensitivity"
+        },
+        "text": {
+          "zh": "VIF 检查一个预测变量是否可被其他预测变量高度解释；高值意味着系数可能不稳定。主模型最大 VIF 约 1.12，没有明显重复预测信息问题。训练端截尾或去除高影响记录的敏感性方案，测试 RMSE 约 $925 和 $919，没有优于原主模型的 $915，因此保留原主模型并坦诚说明尾部预测限制。",
+          "en": "VIF checks redundancy among predictors. High values can signal unstable coefficients. The primary model’s maximum VIF is about 1.12, showing little such redundancy. Training-side capping and influence-removal alternatives produce test RMSEs around $925 and $919, versus $915 for the primary model. We retain the primary fit and disclose its tail limitations."
+        }
+      },
+      {
+        "label": {
+          "zh": "自测",
+          "en": "Check yourself"
+        },
+        "text": {
+          "zh": "用了稳健标准误就可以放心自动给客户定价吗？不可以。个体预测仍不准，真实未来价值也尚未验证。",
+          "en": "Do robust standard errors justify automatic customer pricing? No. Individual predictions remain imperfect and future value remains unvalidated."
+        }
+      }
+    ],
+    "figure": null
+  },
+  {
+    "title": {
+      "zh": "年轻客户是否被低估：证据到哪里为止",
+      "en": "Are younger customers undervalued? Where the evidence stops"
+    },
+    "source": "Requirement, Part 1.5; tables/03_under30_adjusted_association.csv; tables/03_CLV_target_provenance_sensitivity.csv",
+    "blocks": [
+      {
+        "label": {
+          "zh": "先定义“低估”",
+          "en": "Define underestimation first"
+        },
+        "text": {
+          "zh": "低估是“估计值低于真实值”。本数据只有旧 CLV 估计，没有真实未来利润，因此我们能分析年轻组的标签差异，却不能直接测量低估程度。这个缺少的参照，不能靠更复杂模型凭空补出来。",
+          "en": "Underestimation means an estimate is below the true quantity. We have the old CLV estimate but no realised future profit. We can study age differences in the recorded label, but cannot directly measure undervaluation. A more complicated model cannot manufacture the missing reference."
+        }
+      },
+      {
+        "label": {
+          "zh": "从未调整到调整",
+          "en": "Unadjusted and adjusted comparisons"
+        },
+        "text": {
+          "zh": "未调整时，30 岁以下平均 CLV 少约 $833。控制产品、交易及年龄二次项的训练集专题模型中，Under30 系数约 −$197，HC3 区间约 [−$273, −$122]。再加入 Income 和 Yield，系数约 −$29，区间约 [−$55, −$4]。数字变化提示结论依赖控制了什么，而不是某个固定“年轻惩罚”。",
+          "en": "The unadjusted under-30 mean gap is about −$833. In a training-set diagnostic controlling products, transactions and quadratic age, the Under30 coefficient is about −$197, with HC3 interval [−$273, −$122]. Adding Income and Yield reduces it to about −$29, interval [−$55, −$4]. The estimate depends on the adjustment set; it is not a fixed youth penalty."
+        }
+      },
+      {
+        "label": {
+          "zh": "高 R² 为什么也可能误导",
+          "en": "Why high R² can mislead"
+        },
+        "text": {
+          "zh": "加入 Income 的诊断模型测试 R² 约 0.708；连 Yield 等变量也加入的公式重构诊断约 0.960。它们可能更接近旧公式，所以很好地复制了旧标签。但如果旧公式本来有偏差，复制得更好不会自动更接近真实价值。",
+          "en": "The income-added diagnostic reaches test R² about 0.708, and a broader formula-reconstruction diagnostic including Yield reaches about 0.960. These models may reproduce the old formula more closely. If that formula is biased, better imitation does not automatically improve truth."
+        }
+      },
+      {
+        "label": {
+          "zh": "需要什么新证据",
+          "en": "What new evidence would help?"
+        },
+        "text": {
+          "zh": "应获取有时间标记的后续收益、客户关系持续时间、服务成本，以及旧公式或数据记录规则。用同一时间窗口比较预测与真实收益，并在新时期验证。当前合理表述是“发现年轻客户记录 CLV 较低，值得核查公式和数据”，而非直接给全体年轻客户统一上调。",
+          "en": "Useful new evidence includes dated subsequent profit, relationship duration, service costs, and the old formula or recording rules. Compare predictions with outcomes over a consistent horizon and validate in a later period. The current finding supports auditing younger customers’ recorded values, not applying an automatic age-based uplift."
+        }
+      },
+      {
+        "label": {
+          "zh": "自测",
+          "en": "Check yourself"
+        },
+        "text": {
+          "zh": "一个模型能把旧 CLV 预测得非常准，能证明旧 CLV 本身正确吗？不能，这是复制标签与验证现实的区别。",
+          "en": "Can excellent prediction of old CLV prove that old CLV is correct? No. Reproducing a label and validating reality are different tasks."
+        }
+      }
+    ],
+    "figure": null
+  },
+  {
+    "title": {
+      "zh": "把统计结果变成可检验的建议",
+      "en": "Turning findings into testable actions"
+    },
+    "source": "Requirement, Part 4; tables/04_business_recommendations.csv",
+    "blocks": [
+      {
+        "label": {
+          "zh": "建议的证据链",
+          "en": "The evidence chain"
+        },
+        "text": {
+          "zh": "一条建议要说清楚：针对哪个群、观察到什么、模型提供什么支持、做什么试点、如何判断有效。统计关联提供调查方向；是否真的提高盈利，需要试点或后续评价。",
+          "en": "A recommendation should identify the target segment, observed pattern, model evidence, proposed pilot and success measure. Associations suggest where to investigate. Actual profit improvements require a pilot or subsequent evaluation."
+        }
+      },
+      {
+        "label": {
+          "zh": "保留高记录价值关系",
+          "en": "Retain relationships with high recorded value"
+        },
+        "text": {
+          "zh": "针对 C5：470 人，占 4.7%，平均 CLV 约 $4,741。主模型里交易和产品系数为正，但该群测试 MAE 约 $1,279，个体预测不够精确。先做自愿服务回访，比较试点与对照的留存率、净 Yield 和投诉。当前盈利高的 C6 也应保持服务关注。",
+          "en": "C5 has 470 records, 4.7% of the sample, and mean CLV about $4,741. Positive product and transaction coefficients support relationship-focused investigation, but C5 test MAE is around $1,279. Pilot voluntary service reviews and compare retention, net Yield and complaints with a control. C6 also deserves attention for current profit."
+        }
+      },
+      {
+        "label": {
+          "zh": "单产品高活跃客户的两个试点",
+          "en": "Two pilots for active single-product customers"
+        },
+        "text": {
+          "zh": "针对 C3：平均 1 个产品、372 次交易。产品系数约 $652，支持需求导向的交叉销售小试点，但不能承诺每多一个产品会赚 $652。另因 56.2% 为负 Yield，调查服务成本。补充 Yield 模型中交易系数约 −0.56，但 R² 仅 0.060，因此先测渠道支持效果，不直接加费。",
+          "en": "C3 averages one product and 372 transactions. The product coefficient around $652 supports a small needs-based cross-selling pilot, not a promise of $652 extra profit. With 56.2% negative Yield, investigate service costs too. The Yield model’s transaction coefficient is about −0.56, but test R² is only 0.060, so test channel support before fee changes."
+        }
+      },
+      {
+        "label": {
+          "zh": "核实数据的行动",
+          "en": "A data-quality action"
+        },
+        "text": {
+          "zh": "针对 C1：39.7% 的 Income 为零。加入收入后拟合记录 CLV 更好，说明收入记录对旧价值判断很重要。核实真实零、未申报与过期记录，保留更新来源，再比较分群和价值判断是否改变。不要把填补值假装成客户确认的信息。",
+          "en": "C1 has a 39.7% zero-income rate. The better fit after adding income suggests that income records matter to the old value label. Verify genuine zeros, non-reporting and stale data, retain provenance, and reassess profiles. Do not present imputed values as customer-confirmed information."
+        }
+      },
+      {
+        "label": {
+          "zh": "自测",
+          "en": "Check yourself"
+        },
+        "text": {
+          "zh": "为什么建议里需要对照组？因为市场、季节或客户自身变化也可能改变收益。对照帮助区分试点效果与同期变化。",
+          "en": "Why include a control group? Market, seasonal and customer changes can alter outcomes even without intervention. A control helps separate pilot effects from concurrent change."
+        }
+      }
+    ],
+    "figure": null
+  },
+  {
+    "title": {
+      "zh": "读懂 R 代码并重新运行",
+      "en": "Reading the R code and reproducing the work"
+    },
+    "source": "analysis/START_HERE.txt; run_analysis.R; R/01_data_eda.R–03_models.R; verify_results.R",
+    "blocks": [
+      {
+        "label": {
+          "zh": "不必先背所有函数",
+          "en": "You do not need every function memorised"
+        },
+        "text": {
+          "zh": "先知道数据怎样流动。run_analysis.R 是总开关，依次运行数据检查、聚类、模型和报告模块。tables 保存数字表，plots 保存图片，models 保存拟合对象。旧原始 CSV 在 analysis 文件夹的上一级，运行时需要保持这个相对位置。",
+          "en": "Follow the data flow first. run_analysis.R is the entry point, running audit, clustering, modelling and reporting modules. tables stores numerical outputs, plots stores figures and models stores fitted objects. The original CSV sits one level above analysis and must retain that relative location."
+        }
+      },
+      {
+        "label": {
+          "zh": "五个常见写法",
+          "en": "Five common expressions"
+        },
+        "text": {
+          "zh": "read.csv(...) 读数据；d$Age 取 d 的 Age 列；mean(d$Age) 算均值；scale(x) 按列标准化；lm(CLV ~ Tot_Prod + No_Trans + Age_c, data=train) 拟合训练集回归。“~”左边是要解释的结果，右边是预测变量。“<-”表示把右边结果存进左边名称。",
+          "en": "read.csv(...) reads data. d$Age selects the Age column. mean(d$Age) computes its mean. scale(x) standardises columns. lm(CLV ~ Tot_Prod + No_Trans + Age_c, data=train) fits the training regression. The left of ~ is the outcome and the right lists predictors. <- assigns a result to a name."
+        }
+      },
+      {
+        "label": {
+          "zh": "建议学习顺序",
+          "en": "A practical reading order"
+        },
+        "text": {
+          "zh": "先打开 01_univariate_summary.csv 验证均值和中位数；再看 02_cluster_profiles.csv 对照六群；接着看 03_primary_coefficients_HC3.csv 和 03_primary_test_metrics.csv。最后读对应 R 模块，而不是第一天就从所有辅助函数开始。课后可以改一个教学副本的图表标题，熟悉运行与输出。",
+          "en": "Start with 01_univariate_summary.csv, then compare the six groups in 02_cluster_profiles.csv. Next read 03_primary_coefficients_HC3.csv and 03_primary_test_metrics.csv. Then inspect the corresponding R modules rather than beginning with every helper function. A safe first exercise is changing a chart title in a copy."
+        }
+      },
+      {
+        "label": {
+          "zh": "怎样重跑",
+          "en": "How to rerun"
+        },
+        "text": {
+          "zh": "在终端执行 Rscript --vanilla /完整路径/group/analysis/run_analysis.R，随后运行同目录 verify_results.R。也可以在 RStudio 把工作目录设为 analysis，再 source(\"run_analysis.R\", encoding=\"UTF-8\")。固定随机种子让结果可重复，但换 R 版本或算法实现仍可能产生细小差异。",
+          "en": "Run Rscript --vanilla /full/path/group/analysis/run_analysis.R, then run verify_results.R from the same folder. In RStudio, set the working directory to analysis and use source(\"run_analysis.R\", encoding=\"UTF-8\"). Fixed seeds support reproducibility, though software-version changes can still affect small details."
+        }
+      },
+      {
+        "label": {
+          "zh": "自测",
+          "en": "Check yourself"
+        },
+        "text": {
+          "zh": "复现通过代表什么？代表按这些输入和方法可以得到一致输出；不等于样本代表所有银行客户，也不等于模型能预测真实未来。",
+          "en": "What does reproducibility establish? The stated inputs and methods produce consistent outputs. It does not establish population representativeness or genuine future prediction."
+        }
+      }
+    ],
+    "figure": null
+  },
+  {
+    "title": {
+      "zh": "用自己的话讲清楚整份作业",
+      "en": "Explain the whole assignment in your own words"
+    },
+    "source": "Requirement, Part 5; W3/W4/W6/W7/W8 synthesis",
+    "blocks": [
+      {
+        "label": {
+          "zh": "三句话复述",
+          "en": "A short explanation"
+        },
+        "text": {
+          "zh": "“我们先核查数据，发现零收入记录和极端利润会影响解释。接着用四个经过处理及标准化的客户特征分成六群，用原始盈利指标描述群体。最后用回归解释记录 CLV，并用测试集检查误差，形成小规模、可评估的业务建议。”",
+          "en": "“We first checked data quality and found ambiguous income zeros and extreme profits. We then grouped customers using four processed and standardised characteristics and profiled groups with original profit measures. Finally, regression explained recorded CLV, held-out errors quantified limitations, and the combined evidence supported testable business actions.”"
+        }
+      },
+      {
+        "label": {
+          "zh": "看数字时要问的问题",
+          "en": "Questions for every number"
+        },
+        "text": {
+          "zh": "这是什么单位？是原始值、标准化值、比例还是金额？在哪些记录上算的？是在训练集、测试集还是全部数据？它描述关联、预测，还是因果？它没有告诉我什么？最后，是否有来源表可以核对？",
+          "en": "What are the units: original values, z-scores, proportions or dollars? Which records produced it? Is it from training, testing or the full dataset? Does it describe association, prediction or causation? What does it leave unanswered? Finally, can I locate the source table?"
+        }
+      },
+      {
+        "label": {
+          "zh": "演示与学习版的分工",
+          "en": "Presentation versus learning guide"
+        },
+        "text": {
+          "zh": "学习版把原理展开，适合慢慢读。最终 PPT 主体面向非技术管理者，10 页讲 10 分钟，统计细节和 R 代码放附录。演讲时可以说“六群保留了有用的客户差异，但分群有重叠”，不必现场推导距离公式。问答时再用附录说明依据。",
+          "en": "This guide develops the reasoning for slow study. The final presentation uses ten main slides for ten minutes with a nontechnical management audience. Detailed outputs and R code belong in the appendix. Explain that six groups preserve useful differences but overlap, rather than deriving distance formulas during the main talk."
+        }
+      },
+      {
+        "label": {
+          "zh": "再检查三个误区",
+          "en": "Check three common mistakes"
+        },
+        "text": {
+          "zh": "“显著”不等于重要或因果；“高 R²”不等于真实 CLV 正确；“固定分成六群”不等于自然界真的只有六种客户。能够讲清这些限制，是理解结果的一部分，不是削弱作业。",
+          "en": "Statistical significance does not establish importance or causation. High R² does not validate the truth of CLV. Choosing six clusters does not prove six natural customer types. Explaining these limitations demonstrates understanding of the analysis."
+        }
+      },
+      {
+        "label": {
+          "zh": "最后自测",
+          "en": "Final self-check"
+        },
+        "text": {
+          "zh": "请分别解释：为什么保留 Income=0；为什么聚类不放 CLV；为什么六群不是最高 silhouette；为什么测试 R² 不是准确率；为什么不能统一上调年轻客户 CLV。能独立回答这五题，就已经掌握这份作业最重要的逻辑。",
+          "en": "Explain why we retain income zeros, exclude CLV from clustering, choose six despite a lower silhouette, avoid calling test R² accuracy, and reject an automatic uplift for younger customers. Answering these independently demonstrates the assignment’s central reasoning."
+        }
+      }
+    ],
+    "figure": null
+  }
+]

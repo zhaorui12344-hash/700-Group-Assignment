@@ -1,0 +1,562 @@
+{
+  "slides": [
+    {
+      "slide": 1,
+      "title": "零售银行客户细分与盈利分析",
+      "main": true,
+      "source": "Assignment requirement.docx, Parts 1–5; analysis/tables/01_data_audit.csv"
+    },
+    {
+      "slide": 2,
+      "title": "数据检查影响后续解释",
+      "main": true,
+      "source": "01_data_audit.csv; 01_zero_income_profile.csv; 01_age_category_mapping.csv; 02_cluster_input_caps.csv; W3 slides 7–11, 23, 33–35; W7 slides 15–16"
+    },
+    {
+      "slide": 3,
+      "title": "年轻客户的记录 CLV 较低",
+      "main": true,
+      "source": "01_age_band_profile.csv; 01_welch_two_group_tests.csv; 01_correlations_tests.csv; W4 slides 11–17; W6 slides 9–16, 19–24"
+    },
+    {
+      "slide": 4,
+      "title": "六群保留了更多可解释差异",
+      "main": true,
+      "source": "02_k_comparison.csv; 02_shortlist_profile_comparison.csv; 02_selected_quality.csv; W7 slides 18–21"
+    },
+    {
+      "slide": 5,
+      "title": "六个客户群的规模与特征",
+      "main": true,
+      "source": "02_cluster_profiles.csv; 02_cluster_age_category_proportions.csv; W7 slides 24–30"
+    },
+    {
+      "slide": 6,
+      "title": "简洁模型解释部分记录 CLV 差异",
+      "main": true,
+      "source": "03_CV_model_comparison.csv; 03_primary_coefficients_HC3.csv; 03_primary_test_metrics.csv; W8 slides 20–26"
+    },
+    {
+      "slide": 7,
+      "title": "模型的限制影响结论范围",
+      "main": true,
+      "source": "03_primary_diagnostics.csv; 03_primary_VIF.csv; 03_outlier_sensitivity_metrics.csv; 03_Yield_test_metrics.csv; 03_CLV_target_provenance_sensitivity.csv; W8 slides 27–30"
+    },
+    {
+      "slide": 8,
+      "title": "当前盈利与记录长期价值的排序不同",
+      "main": true,
+      "source": "02_cluster_profiles.csv; 03_predictor_contributions.csv; Requirement, Part 4.1"
+    },
+    {
+      "slide": 9,
+      "title": "三个有证据支持的业务试点",
+      "main": true,
+      "source": "04_business_recommendations.csv; 03_primary_coefficients_HC3.csv; 03_Yield_coefficients_HC3.csv; 03_CLV_test_error_by_cluster.csv; Requirement, Part 4.2"
+    },
+    {
+      "slide": 10,
+      "title": "先核实数据，再评估试点成效",
+      "main": true,
+      "source": "04_business_recommendations.csv; 02_preprocessing_sensitivity.csv; 03_CLV_target_provenance_sensitivity.csv; Requirement, Part 4"
+    },
+    {
+      "slide": 11,
+      "title": "变量字典与分析角色",
+      "main": false,
+      "source": "01_data_dictionary.csv; assignment requirement.docx"
+    },
+    {
+      "slide": 12,
+      "title": "原始数据的描述统计",
+      "main": false,
+      "source": "analysis/tables/01_univariate_summary.csv"
+    },
+    {
+      "slide": 13,
+      "title": "数据处理与零收入检查",
+      "main": false,
+      "source": "01_data_audit.csv; 01_zero_income_profile.csv; 02_cluster_input_caps.csv"
+    },
+    {
+      "slide": 14,
+      "title": "双变量结果与检验",
+      "main": false,
+      "source": "01_correlations_tests.csv; 01_zero_income_chisquare.csv; 01_welch_two_group_tests.csv; 01_age_band_anova.csv"
+    },
+    {
+      "slide": 15,
+      "title": "候选群数比较",
+      "main": false,
+      "source": "analysis/tables/02_k_comparison.csv"
+    },
+    {
+      "slide": 16,
+      "title": "六群完整均值画像",
+      "main": false,
+      "source": "02_cluster_profiles.csv"
+    },
+    {
+      "slide": 17,
+      "title": "年龄类别的群内比例",
+      "main": false,
+      "source": "02_cluster_age_category_proportions.csv"
+    },
+    {
+      "slide": 18,
+      "title": "盈利中位数与零收入比例",
+      "main": false,
+      "source": "02_cluster_profiles.csv"
+    },
+    {
+      "slide": 19,
+      "title": "分群稳定性与处理敏感性",
+      "main": false,
+      "source": "02_seed_stability.csv; 02_preprocessing_sensitivity.csv"
+    },
+    {
+      "slide": 20,
+      "title": "训练集内部模型选择",
+      "main": false,
+      "source": "analysis/tables/03_CV_model_comparison.csv"
+    },
+    {
+      "slide": 21,
+      "title": "主 CLV 回归输出",
+      "main": false,
+      "source": "03_primary_training_fit.csv; 03_primary_coefficients_HC3.csv; models/primary_summary.txt"
+    },
+    {
+      "slide": 22,
+      "title": "测试集表现与模型敏感性",
+      "main": false,
+      "source": "03_primary_test_metrics.csv; 03_Yield_test_metrics.csv; 03_CLV_target_provenance_sensitivity.csv"
+    },
+    {
+      "slide": 23,
+      "title": "年轻客户专题与补充 Yield 模型",
+      "main": false,
+      "source": "03_under30_adjusted_association.csv; 03_Yield_coefficients_HC3.csv; models/yield_summary.txt"
+    },
+    {
+      "slide": 24,
+      "title": "补充 Yield 模型的系数",
+      "main": false,
+      "source": "analysis/tables/03_Yield_coefficients_HC3.csv"
+    },
+    {
+      "slide": 25,
+      "title": "CLV 模型诊断",
+      "main": false,
+      "source": "analysis/plots/09_regression_diagnostics.png; 03_primary_diagnostics.csv"
+    },
+    {
+      "slide": 26,
+      "title": "CLV 测试预测",
+      "main": false,
+      "source": "analysis/plots/10_test_predictions.png; 03_primary_diagnostics.csv"
+    },
+    {
+      "slide": 27,
+      "title": "课程对应与复现说明",
+      "main": false,
+      "source": "W3–W8 lecture decks; analysis/START_HERE.txt"
+    },
+    {
+      "slide": 28,
+      "title": "R 代码 run_analysis.R  1",
+      "main": false,
+      "source": "analysis/run_analysis.R"
+    },
+    {
+      "slide": 29,
+      "title": "R 代码 R/00_helpers.R  1",
+      "main": false,
+      "source": "analysis/R/00_helpers.R"
+    },
+    {
+      "slide": 30,
+      "title": "R 代码 R/00_helpers.R  2",
+      "main": false,
+      "source": "analysis/R/00_helpers.R"
+    },
+    {
+      "slide": 31,
+      "title": "R 代码 R/01_data_eda.R  1",
+      "main": false,
+      "source": "analysis/R/01_data_eda.R"
+    },
+    {
+      "slide": 32,
+      "title": "R 代码 R/01_data_eda.R  2",
+      "main": false,
+      "source": "analysis/R/01_data_eda.R"
+    },
+    {
+      "slide": 33,
+      "title": "R 代码 R/01_data_eda.R  3",
+      "main": false,
+      "source": "analysis/R/01_data_eda.R"
+    },
+    {
+      "slide": 34,
+      "title": "R 代码 R/01_data_eda.R  4",
+      "main": false,
+      "source": "analysis/R/01_data_eda.R"
+    },
+    {
+      "slide": 35,
+      "title": "R 代码 R/02_clusters.R  1",
+      "main": false,
+      "source": "analysis/R/02_clusters.R"
+    },
+    {
+      "slide": 36,
+      "title": "R 代码 R/02_clusters.R  2",
+      "main": false,
+      "source": "analysis/R/02_clusters.R"
+    },
+    {
+      "slide": 37,
+      "title": "R 代码 R/02_clusters.R  3",
+      "main": false,
+      "source": "analysis/R/02_clusters.R"
+    },
+    {
+      "slide": 38,
+      "title": "R 代码 R/02_clusters.R  4",
+      "main": false,
+      "source": "analysis/R/02_clusters.R"
+    },
+    {
+      "slide": 39,
+      "title": "R 代码 R/02_clusters.R  5",
+      "main": false,
+      "source": "analysis/R/02_clusters.R"
+    },
+    {
+      "slide": 40,
+      "title": "R 代码 R/03_models.R  1",
+      "main": false,
+      "source": "analysis/R/03_models.R"
+    },
+    {
+      "slide": 41,
+      "title": "R 代码 R/03_models.R  2",
+      "main": false,
+      "source": "analysis/R/03_models.R"
+    },
+    {
+      "slide": 42,
+      "title": "R 代码 R/03_models.R  3",
+      "main": false,
+      "source": "analysis/R/03_models.R"
+    },
+    {
+      "slide": 43,
+      "title": "R 代码 R/03_models.R  4",
+      "main": false,
+      "source": "analysis/R/03_models.R"
+    },
+    {
+      "slide": 44,
+      "title": "R 代码 R/03_models.R  5",
+      "main": false,
+      "source": "analysis/R/03_models.R"
+    },
+    {
+      "slide": 45,
+      "title": "R 代码 R/03_models.R  6",
+      "main": false,
+      "source": "analysis/R/03_models.R"
+    },
+    {
+      "slide": 46,
+      "title": "R 代码 R/04_report.R  1",
+      "main": false,
+      "source": "analysis/R/04_report.R"
+    },
+    {
+      "slide": 47,
+      "title": "R 代码 R/04_report.R  2",
+      "main": false,
+      "source": "analysis/R/04_report.R"
+    },
+    {
+      "slide": 48,
+      "title": "R 代码 R/04_report.R  3",
+      "main": false,
+      "source": "analysis/R/04_report.R"
+    },
+    {
+      "slide": 49,
+      "title": "R 代码 R/04_report.R  4",
+      "main": false,
+      "source": "analysis/R/04_report.R"
+    },
+    {
+      "slide": 50,
+      "title": "R 代码 R/04_report.R  5",
+      "main": false,
+      "source": "analysis/R/04_report.R"
+    },
+    {
+      "slide": 51,
+      "title": "R 代码 R/04_report.R  6",
+      "main": false,
+      "source": "analysis/R/04_report.R"
+    },
+    {
+      "slide": 52,
+      "title": "R 代码 R/04_report.R  7",
+      "main": false,
+      "source": "analysis/R/04_report.R"
+    },
+    {
+      "slide": 53,
+      "title": "R 代码 R/04_report.R  8",
+      "main": false,
+      "source": "analysis/R/04_report.R"
+    },
+    {
+      "slide": 54,
+      "title": "R 代码 R/04_report.R  9",
+      "main": false,
+      "source": "analysis/R/04_report.R"
+    },
+    {
+      "slide": 55,
+      "title": "R 代码 verify_results.R  1",
+      "main": false,
+      "source": "analysis/verify_results.R"
+    },
+    {
+      "slide": 56,
+      "title": "R 代码 verify_results.R  2",
+      "main": false,
+      "source": "analysis/verify_results.R"
+    },
+    {
+      "slide": 57,
+      "title": "R 代码 verify_results.R  3",
+      "main": false,
+      "source": "analysis/verify_results.R"
+    }
+  ],
+  "code": [
+    {
+      "slide": 28,
+      "file": "run_analysis.R",
+      "displayStart": 0,
+      "displayEnd": 30,
+      "sourceLines": 24
+    },
+    {
+      "slide": 29,
+      "file": "R/00_helpers.R",
+      "displayStart": 0,
+      "displayEnd": 60,
+      "sourceLines": 89
+    },
+    {
+      "slide": 30,
+      "file": "R/00_helpers.R",
+      "displayStart": 60,
+      "displayEnd": 112,
+      "sourceLines": 89
+    },
+    {
+      "slide": 31,
+      "file": "R/01_data_eda.R",
+      "displayStart": 0,
+      "displayEnd": 60,
+      "sourceLines": 142
+    },
+    {
+      "slide": 32,
+      "file": "R/01_data_eda.R",
+      "displayStart": 60,
+      "displayEnd": 120,
+      "sourceLines": 142
+    },
+    {
+      "slide": 33,
+      "file": "R/01_data_eda.R",
+      "displayStart": 120,
+      "displayEnd": 180,
+      "sourceLines": 142
+    },
+    {
+      "slide": 34,
+      "file": "R/01_data_eda.R",
+      "displayStart": 180,
+      "displayEnd": 199,
+      "sourceLines": 142
+    },
+    {
+      "slide": 35,
+      "file": "R/02_clusters.R",
+      "displayStart": 0,
+      "displayEnd": 60,
+      "sourceLines": 179
+    },
+    {
+      "slide": 36,
+      "file": "R/02_clusters.R",
+      "displayStart": 60,
+      "displayEnd": 120,
+      "sourceLines": 179
+    },
+    {
+      "slide": 37,
+      "file": "R/02_clusters.R",
+      "displayStart": 120,
+      "displayEnd": 180,
+      "sourceLines": 179
+    },
+    {
+      "slide": 38,
+      "file": "R/02_clusters.R",
+      "displayStart": 180,
+      "displayEnd": 240,
+      "sourceLines": 179
+    },
+    {
+      "slide": 39,
+      "file": "R/02_clusters.R",
+      "displayStart": 240,
+      "displayEnd": 259,
+      "sourceLines": 179
+    },
+    {
+      "slide": 40,
+      "file": "R/03_models.R",
+      "displayStart": 0,
+      "displayEnd": 60,
+      "sourceLines": 223
+    },
+    {
+      "slide": 41,
+      "file": "R/03_models.R",
+      "displayStart": 60,
+      "displayEnd": 120,
+      "sourceLines": 223
+    },
+    {
+      "slide": 42,
+      "file": "R/03_models.R",
+      "displayStart": 120,
+      "displayEnd": 180,
+      "sourceLines": 223
+    },
+    {
+      "slide": 43,
+      "file": "R/03_models.R",
+      "displayStart": 180,
+      "displayEnd": 240,
+      "sourceLines": 223
+    },
+    {
+      "slide": 44,
+      "file": "R/03_models.R",
+      "displayStart": 240,
+      "displayEnd": 300,
+      "sourceLines": 223
+    },
+    {
+      "slide": 45,
+      "file": "R/03_models.R",
+      "displayStart": 300,
+      "displayEnd": 337,
+      "sourceLines": 223
+    },
+    {
+      "slide": 46,
+      "file": "R/04_report.R",
+      "displayStart": 0,
+      "displayEnd": 60,
+      "sourceLines": 274
+    },
+    {
+      "slide": 47,
+      "file": "R/04_report.R",
+      "displayStart": 60,
+      "displayEnd": 120,
+      "sourceLines": 274
+    },
+    {
+      "slide": 48,
+      "file": "R/04_report.R",
+      "displayStart": 120,
+      "displayEnd": 180,
+      "sourceLines": 274
+    },
+    {
+      "slide": 49,
+      "file": "R/04_report.R",
+      "displayStart": 180,
+      "displayEnd": 240,
+      "sourceLines": 274
+    },
+    {
+      "slide": 50,
+      "file": "R/04_report.R",
+      "displayStart": 240,
+      "displayEnd": 300,
+      "sourceLines": 274
+    },
+    {
+      "slide": 51,
+      "file": "R/04_report.R",
+      "displayStart": 300,
+      "displayEnd": 360,
+      "sourceLines": 274
+    },
+    {
+      "slide": 52,
+      "file": "R/04_report.R",
+      "displayStart": 360,
+      "displayEnd": 420,
+      "sourceLines": 274
+    },
+    {
+      "slide": 53,
+      "file": "R/04_report.R",
+      "displayStart": 420,
+      "displayEnd": 480,
+      "sourceLines": 274
+    },
+    {
+      "slide": 54,
+      "file": "R/04_report.R",
+      "displayStart": 480,
+      "displayEnd": 520,
+      "sourceLines": 274
+    },
+    {
+      "slide": 55,
+      "file": "verify_results.R",
+      "displayStart": 0,
+      "displayEnd": 60,
+      "sourceLines": 113
+    },
+    {
+      "slide": 56,
+      "file": "verify_results.R",
+      "displayStart": 60,
+      "displayEnd": 120,
+      "sourceLines": 113
+    },
+    {
+      "slide": 57,
+      "file": "verify_results.R",
+      "displayStart": 120,
+      "displayEnd": 176,
+      "sourceLines": 113
+    }
+  ],
+  "total": 57,
+  "main": 10,
+  "appendix": 47,
+  "font": "Arial Unicode MS"
+}

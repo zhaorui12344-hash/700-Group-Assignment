@@ -1,0 +1,8 @@
+"variable","type","meaning"
+"Tot_Prod","Discrete count","Total products owned, permitted 0-5"
+"Income","Numeric; ambiguous zero","Recorded income; period/unit not specified"
+"No_Trans","Discrete count","Transaction count; period not specified"
+"Cat_Age","Ordinal category","Observed categories 2-6; category 1 absent"
+"Age","Numeric years","Age in years, 18-99"
+"Yield","Numeric profit; negatives valid","Current profit in dollars, may be negative"
+"CLV","Derived numeric estimate","Expected lifetime value in dollars; unknown existing formula"

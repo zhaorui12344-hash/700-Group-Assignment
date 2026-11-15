@@ -1,0 +1,6 @@
+.DS_Store
+.Rhistory
+.RData
+__pycache__/
+node_modules/
+03_R_Learning_Edition/runs/

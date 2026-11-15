@@ -1,0 +1,130 @@
+Assignment 3 learning edition
+Started: 2026-11-16 01:29:55 
+                              check                            value
+1                       source_rows                            10000
+2                    source_columns                                7
+3            explicit_missing_cells                                0
+4 duplicate_value_rows_beyond_first                                2
+5                     zero_income_n                             1689
+6   zero_income_with_transactions_n                             1576
+7                  negative_yield_n                             4368
+8            age_mapping_mismatches                                0
+9                      original_md5 f0476691df9c6f541114756ef40a56d4
+EDA complete. No source records deleted. Source MD5: f0476691df9c6f541114756ef40a56d4 
+k=2 sampled silhouette=0.3231
+k=3 sampled silhouette=0.3067
+k=4 sampled silhouette=0.3122
+k=5 sampled silhouette=0.3099
+k=6 sampled silhouette=0.3149
+k=7 sampled silhouette=0.279
+k=8 sampled silhouette=0.2934
+Selected k: 6 exact silhouette: 0.3162794 
+  Cluster                    name    n Age_mean Tot_Prod_mean Income_mean
+1       1 较年轻·单产品低活跃客户 2586 32.57850      1.000000    436.4814
+2       2     多产品·中等活跃客户 1299 39.84911      2.100847    951.9307
+3       3       单产品·高活跃客户 2006 44.10419      1.000000   1652.9905
+4       4       多产品·高活跃客户 1262 45.88590      2.405705   2094.2599
+5       5   高记录收入·高活跃客户  470 46.10851      1.557447   4956.0574
+6       6     年长·单产品为主客户 2377 70.73959      1.061843    841.6395
+  No_Trans_mean Yield_mean  CLV_mean
+1      142.4803   48.96017  933.8716
+2      218.0346  197.91378 1968.4288
+3      372.1306   58.38684 2227.8265
+4      440.5634  222.17829 3368.4168
+5      516.1277  259.96383 4741.1021
+6      171.5772  287.04712 1431.3525
+Selected CLV model: linear 
+                   model    n      RMSE      MAE            R2 mean_error
+1 Training_mean_baseline 1997 1332.3343 924.1644 -0.0001368027 -15.582274
+2         Primary_linear 1997  915.2314 486.1874  0.5280512808  -9.249646
+         term    estimate classical_se   classical_p     HC3_se     HC3_t
+1 (Intercept) -272.727285  29.06427259  8.154551e-21 35.7073991 -7.637837
+2    Tot_Prod  652.272370  18.91522515 4.523774e-243 20.0503788 32.531673
+3    No_Trans    4.973295   0.07247426  0.000000e+00  0.1278452 38.900912
+4       Age_c    8.942661   0.62364580  4.613430e-46  0.4484258 19.942340
+          HC3_p   HC3_low95  HC3_high95
+1  2.464530e-14 -342.723092 -202.731477
+2 3.882206e-218  612.968402  691.576337
+3 2.460632e-303    4.722685    5.223905
+4  2.142967e-86    8.063629    9.821692
+Yield check:
+                         model    n     RMSE      MAE            R2 mean_error
+1 Yield_training_mean_baseline 1997 688.2114 256.3656 -0.0002235422 -10.288526
+2                 Yield_linear 1997 667.0155 227.4494  0.0604387312  -9.216795
+Under30 adjusted comparisons:
+                                              specification    term   estimate
+6                     Primary predictors plus quadratic age Under30 -197.08830
+61 Also adjust Income and Yield (derived-target diagnostic) Under30  -29.11997
+   classical_se   classical_p   HC3_se     HC3_t           HC3_p  HC3_low95
+6      49.79406 0.00007621244 38.50949 -5.117915 0.0000003161226 -272.57694
+61     13.60056 0.03229731933 13.03746 -2.233561 0.0255395035904  -54.67679
+    HC3_high95
+6  -121.599670
+61   -3.563145
+Report generated: analysis_report.html
+PASS: Original CSV MD5 unchanged 
+PASS: Source dimensions and missingness 
+PASS: Zero-income and positive-transaction counts 
+PASS: Negative profit and repeated-value counts 
+PASS: Raw summary Tot_Prod 
+PASS: Raw summary Income 
+PASS: Raw summary No_Trans 
+PASS: Raw summary Age 
+PASS: Raw summary Yield 
+PASS: Raw summary CLV 
+PASS: No outcome or redundant age category in clustering 
+PASS: All clustering inputs standardised 
+PASS: Saved scaling matches data 
+PASS: Selected Lloyd k-means converged before iteration limit 
+PASS: Every row assigned once and labels match model 
+PASS: Cluster counts and shares reconcile 
+PASS: Cluster table matches assignments 
+PASS: Original-scale cluster means reconcile: Tot_Prod 
+PASS: Original-scale cluster means reconcile: Income 
+PASS: Original-scale cluster means reconcile: No_Trans 
+PASS: Original-scale cluster means reconcile: Age 
+PASS: Original-scale cluster means reconcile: Yield 
+PASS: Original-scale cluster means reconcile: CLV 
+PASS: Cat_Age category proportions sum to one 
+PASS: Cluster profit totals reconcile 
+PASS: Saved cluster centers match assigned observations 
+PASS: Seven k candidates and two exact silhouette checks 
+PASS: Profile-reviewed k=6 is near-best statistically and all groups meet size criterion 
+PASS: Candidate profile comparison recorded 
+PASS: Training and test split covers each row once 
+PASS: Identical primary input patterns do not cross train/test 
+PASS: Identical primary patterns do not cross CV folds 
+PASS: Saved model and split rows agree 
+PASS: Primary regression excludes provenance-risk variables and cluster labels 
+PASS: Training model distinct from all-data refit 
+PASS: Saved CLV predictions equal independent X beta calculation 
+PASS: Test outcomes were not capped or changed 
+PASS: Independent test RMSE and MAE 
+PASS: Independent test R squared 
+PASS: Baseline uses training mean only 
+PASS: All test predictions finite 
+PASS: Independent Yield predictions and RMSE 
+PASS: Sensitivity caps derived from training only 
+PASS: Primary model selected by recorded training CV rule 
+PASS: HC3 standard errors checked against base R delete-one influence identity 
+PASS: Coefficient intervals ordered 
+PASS: At least three recommendations with both evidence sources 
+PASS: Readable HTML report exists 
+PASS: All diagnostic and analysis PNGs exist and are nonempty 
+PASS: Valid PNG signature: 01_distributions.png 
+PASS: Valid PNG signature: 02_outliers.png 
+PASS: Valid PNG signature: 03_age_clv.png 
+PASS: Valid PNG signature: 04_clv_associations.png 
+PASS: Valid PNG signature: 05_zero_income.png 
+PASS: Valid PNG signature: 06_select_k.png 
+PASS: Valid PNG signature: 07_cluster_profiles.png 
+PASS: Valid PNG signature: 08_cluster_profitability.png 
+PASS: Valid PNG signature: 09_regression_diagnostics.png 
+PASS: Valid PNG signature: 10_test_predictions.png 
+PASS: Valid PNG signature: 11_adjusted_age_pattern.png 
+PASS: Valid PNG signature: 12_yield_diagnostics.png 
+PASS: Every local report link resolves 
+PASS: No invalid numeric placeholders in report 
+
+63checks passed.
+Verified: 2026-11-16 01:30:13 

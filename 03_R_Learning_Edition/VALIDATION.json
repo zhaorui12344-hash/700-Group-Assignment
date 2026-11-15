@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "editions": [
+    {
+      "edition": "English",
+      "passed_checks": 63,
+      "matching_csvs": 81,
+      "report_rerun_command": "verified",
+      "source_sha256": "dfe44c8c9241fd77d4ecd6c949fe3195742314bf10221e8053bbeae452b52639"
+    },
+    {
+      "edition": "Chinese",
+      "passed_checks": 63,
+      "matching_csvs": 81,
+      "report_rerun_command": "verified",
+      "source_sha256": "118b1e788c81ad48b09f72bc431ae9af11e95ee66adcac5075a3ca12a4128ddc"
+    }
+  ],
+  "modules_identical": "12 AST comparisons passed after declared path adaptations",
+  "teaching_blocks_per_language": 86
+}

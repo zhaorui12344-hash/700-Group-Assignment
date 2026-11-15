@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "original_course_files_preserved": 16,
+  "unique_file_contents": 195,
+  "duplicate_file_groups": 0,
+  "source_data_copies": 1,
+  "classified_layout_full_run_checks": 63,
+  "classified_layout_matching_csvs": 81,
+  "scope": "Final artifacts/current analysis/source materials; duplicate archives and development caches omitted."
+}

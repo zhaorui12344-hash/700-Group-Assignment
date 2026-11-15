@@ -1,0 +1,5 @@
+"scenario","adjusted_rand_vs_primary","sampled_silhouette_own_space","smallest_n"
+"raw_no_caps",0.815606983320729,0.331221793702822,54
+"capped_log_income",0.526143700467636,0.364861418840955,1125
+"zeros_as_missing_imputed",0.835114070047347,0.31824676438264,431
+"exclude_income",0.730701739692948,0.384895110042019,600

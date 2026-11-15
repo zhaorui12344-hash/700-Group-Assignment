@@ -1,0 +1,74 @@
+Assignment 3 analysis
+Started: 2026-11-16 00:31:51 
+
+MODULE: 01_data_eda.R 
+                              check                            value
+1                       source_rows                            10000
+2                    source_columns                                7
+3            explicit_missing_cells                                0
+4 duplicate_value_rows_beyond_first                                2
+5                     zero_income_n                             1689
+6   zero_income_with_transactions_n                             1576
+7                  negative_yield_n                             4368
+8            age_mapping_mismatches                                0
+9                      original_md5 f0476691df9c6f541114756ef40a56d4
+EDA complete. No source records deleted. Source MD5: f0476691df9c6f541114756ef40a56d4 
+
+MODULE: 02_clusters.R 
+k=2 sampled silhouette=0.3231
+k=3 sampled silhouette=0.3067
+k=4 sampled silhouette=0.3122
+k=5 sampled silhouette=0.3099
+k=6 sampled silhouette=0.3149
+k=7 sampled silhouette=0.279
+k=8 sampled silhouette=0.2934
+Selected k: 6 exact silhouette: 0.3162794 
+  Cluster                    name    n Age_mean Tot_Prod_mean Income_mean
+1       1 较年轻·单产品低活跃客户 2586 32.57850      1.000000    436.4814
+2       2     多产品·中等活跃客户 1299 39.84911      2.100847    951.9307
+3       3       单产品·高活跃客户 2006 44.10419      1.000000   1652.9905
+4       4       多产品·高活跃客户 1262 45.88590      2.405705   2094.2599
+5       5   高记录收入·高活跃客户  470 46.10851      1.557447   4956.0574
+6       6     年长·单产品为主客户 2377 70.73959      1.061843    841.6395
+  No_Trans_mean Yield_mean  CLV_mean
+1      142.4803   48.96017  933.8716
+2      218.0346  197.91378 1968.4288
+3      372.1306   58.38684 2227.8265
+4      440.5634  222.17829 3368.4168
+5      516.1277  259.96383 4741.1021
+6      171.5772  287.04712 1431.3525
+
+MODULE: 03_models.R 
+Selected CLV model: linear 
+                   model    n      RMSE      MAE            R2 mean_error
+1 Training_mean_baseline 1997 1332.3343 924.1644 -0.0001368027 -15.582274
+2         Primary_linear 1997  915.2314 486.1874  0.5280512808  -9.249646
+         term    estimate classical_se   classical_p     HC3_se     HC3_t
+1 (Intercept) -272.727285  29.06427259  8.154551e-21 35.7073991 -7.637837
+2    Tot_Prod  652.272370  18.91522515 4.523774e-243 20.0503788 32.531673
+3    No_Trans    4.973295   0.07247426  0.000000e+00  0.1278452 38.900912
+4       Age_c    8.942661   0.62364580  4.613430e-46  0.4484258 19.942340
+          HC3_p   HC3_low95  HC3_high95
+1  2.464530e-14 -342.723092 -202.731477
+2 3.882206e-218  612.968402  691.576337
+3 2.460632e-303    4.722685    5.223905
+4  2.142967e-86    8.063629    9.821692
+Yield check:
+                         model    n     RMSE      MAE            R2 mean_error
+1 Yield_training_mean_baseline 1997 688.2114 256.3656 -0.0002235422 -10.288526
+2                 Yield_linear 1997 667.0155 227.4494  0.0604387312  -9.216795
+Under30 adjusted comparisons:
+                                              specification    term   estimate
+6                     Primary predictors plus quadratic age Under30 -197.08830
+61 Also adjust Income and Yield (derived-target diagnostic) Under30  -29.11997
+   classical_se   classical_p   HC3_se     HC3_t           HC3_p  HC3_low95
+6      49.79406 0.00007621244 38.50949 -5.117915 0.0000003161226 -272.57694
+61     13.60056 0.03229731933 13.03746 -2.233561 0.0255395035904  -54.67679
+    HC3_high95
+6  -121.599670
+61   -3.563145
+
+MODULE: 04_report.R 
+Report generated: analysis_report.html
+
+Completed: 2026-11-16 00:32:05 

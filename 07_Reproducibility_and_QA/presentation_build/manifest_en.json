@@ -1,0 +1,562 @@
+{
+  "slides": [
+    {
+      "slide": 1,
+      "title": "Customer segmentation\nand bank profitability",
+      "main": true,
+      "source": "Assignment requirement.docx, Parts 1–5; analysis/tables/01_data_audit.csv"
+    },
+    {
+      "slide": 2,
+      "title": "Data quality shapes the analysis",
+      "main": true,
+      "source": "01_data_audit.csv; 01_zero_income_profile.csv; 01_age_category_mapping.csv; 02_cluster_input_caps.csv; W3 slides 7–11, 23, 33–35; W7 slides 15–16"
+    },
+    {
+      "slide": 3,
+      "title": "Younger customers have lower recorded CLV",
+      "main": true,
+      "source": "01_age_band_profile.csv; 01_welch_two_group_tests.csv; 01_correlations_tests.csv; W4 slides 11–17; W6 slides 9–16, 19–24"
+    },
+    {
+      "slide": 4,
+      "title": "Six groups retain meaningful profile differences",
+      "main": true,
+      "source": "02_k_comparison.csv; 02_shortlist_profile_comparison.csv; 02_selected_quality.csv; W7 slides 18–21"
+    },
+    {
+      "slide": 5,
+      "title": "The six customer profiles",
+      "main": true,
+      "source": "02_cluster_profiles.csv; 02_cluster_age_category_proportions.csv; W7 slides 24–30"
+    },
+    {
+      "slide": 6,
+      "title": "A simple model explains part of recorded CLV",
+      "main": true,
+      "source": "03_CV_model_comparison.csv; 03_primary_coefficients_HC3.csv; 03_primary_test_metrics.csv; W8 slides 20–26"
+    },
+    {
+      "slide": 7,
+      "title": "Model limitations bound the conclusions",
+      "main": true,
+      "source": "03_primary_diagnostics.csv; 03_primary_VIF.csv; 03_outlier_sensitivity_metrics.csv; 03_Yield_test_metrics.csv; 03_CLV_target_provenance_sensitivity.csv; W8 slides 27–30"
+    },
+    {
+      "slide": 8,
+      "title": "Current profit and recorded lifetime value differ",
+      "main": true,
+      "source": "02_cluster_profiles.csv; 03_predictor_contributions.csv; Requirement, Part 4.1"
+    },
+    {
+      "slide": 9,
+      "title": "Three business pilots supported by the evidence",
+      "main": true,
+      "source": "04_business_recommendations.csv; 03_primary_coefficients_HC3.csv; 03_Yield_coefficients_HC3.csv; 03_CLV_test_error_by_cluster.csv; Requirement, Part 4.2"
+    },
+    {
+      "slide": 10,
+      "title": "Data verification and pilot evaluation come next",
+      "main": true,
+      "source": "04_business_recommendations.csv; 02_preprocessing_sensitivity.csv; 03_CLV_target_provenance_sensitivity.csv; Requirement, Part 4"
+    },
+    {
+      "slide": 11,
+      "title": "Variable dictionary and analytical roles",
+      "main": false,
+      "source": "01_data_dictionary.csv; assignment requirement.docx"
+    },
+    {
+      "slide": 12,
+      "title": "Descriptive statistics of original data",
+      "main": false,
+      "source": "analysis/tables/01_univariate_summary.csv"
+    },
+    {
+      "slide": 13,
+      "title": "Data treatment and zero-income checks",
+      "main": false,
+      "source": "01_data_audit.csv; 01_zero_income_profile.csv; 02_cluster_input_caps.csv"
+    },
+    {
+      "slide": 14,
+      "title": "Bivariate results and tests",
+      "main": false,
+      "source": "01_correlations_tests.csv; 01_zero_income_chisquare.csv; 01_welch_two_group_tests.csv; 01_age_band_anova.csv"
+    },
+    {
+      "slide": 15,
+      "title": "Candidate cluster comparison",
+      "main": false,
+      "source": "analysis/tables/02_k_comparison.csv"
+    },
+    {
+      "slide": 16,
+      "title": "All original numeric means by cluster",
+      "main": false,
+      "source": "02_cluster_profiles.csv"
+    },
+    {
+      "slide": 17,
+      "title": "Age-category proportions within clusters",
+      "main": false,
+      "source": "02_cluster_age_category_proportions.csv"
+    },
+    {
+      "slide": 18,
+      "title": "Profit medians and zero-income rates",
+      "main": false,
+      "source": "02_cluster_profiles.csv"
+    },
+    {
+      "slide": 19,
+      "title": "Cluster stability and preprocessing sensitivity",
+      "main": false,
+      "source": "02_seed_stability.csv; 02_preprocessing_sensitivity.csv"
+    },
+    {
+      "slide": 20,
+      "title": "Training-only model selection",
+      "main": false,
+      "source": "analysis/tables/03_CV_model_comparison.csv"
+    },
+    {
+      "slide": 21,
+      "title": "Primary CLV regression output",
+      "main": false,
+      "source": "03_primary_training_fit.csv; 03_primary_coefficients_HC3.csv; models/primary_summary.txt"
+    },
+    {
+      "slide": 22,
+      "title": "Held-out performance and sensitivity",
+      "main": false,
+      "source": "03_primary_test_metrics.csv; 03_Yield_test_metrics.csv; 03_CLV_target_provenance_sensitivity.csv"
+    },
+    {
+      "slide": 23,
+      "title": "Under-30 diagnostic and secondary Yield model",
+      "main": false,
+      "source": "03_under30_adjusted_association.csv; 03_Yield_coefficients_HC3.csv; models/yield_summary.txt"
+    },
+    {
+      "slide": 24,
+      "title": "Secondary Yield model coefficients",
+      "main": false,
+      "source": "analysis/tables/03_Yield_coefficients_HC3.csv"
+    },
+    {
+      "slide": 25,
+      "title": "CLV model diagnostics",
+      "main": false,
+      "source": "analysis/plots/09_regression_diagnostics.png; 03_primary_diagnostics.csv"
+    },
+    {
+      "slide": 26,
+      "title": "CLV held-out predictions",
+      "main": false,
+      "source": "analysis/plots/10_test_predictions.png; 03_primary_diagnostics.csv"
+    },
+    {
+      "slide": 27,
+      "title": "Course references and reproducibility",
+      "main": false,
+      "source": "W3–W8 lecture decks; analysis/START_HERE.txt"
+    },
+    {
+      "slide": 28,
+      "title": "R code run_analysis.R  1",
+      "main": false,
+      "source": "analysis/run_analysis.R"
+    },
+    {
+      "slide": 29,
+      "title": "R code R/00_helpers.R  1",
+      "main": false,
+      "source": "analysis/R/00_helpers.R"
+    },
+    {
+      "slide": 30,
+      "title": "R code R/00_helpers.R  2",
+      "main": false,
+      "source": "analysis/R/00_helpers.R"
+    },
+    {
+      "slide": 31,
+      "title": "R code R/01_data_eda.R  1",
+      "main": false,
+      "source": "analysis/R/01_data_eda.R"
+    },
+    {
+      "slide": 32,
+      "title": "R code R/01_data_eda.R  2",
+      "main": false,
+      "source": "analysis/R/01_data_eda.R"
+    },
+    {
+      "slide": 33,
+      "title": "R code R/01_data_eda.R  3",
+      "main": false,
+      "source": "analysis/R/01_data_eda.R"
+    },
+    {
+      "slide": 34,
+      "title": "R code R/01_data_eda.R  4",
+      "main": false,
+      "source": "analysis/R/01_data_eda.R"
+    },
+    {
+      "slide": 35,
+      "title": "R code R/02_clusters.R  1",
+      "main": false,
+      "source": "analysis/R/02_clusters.R"
+    },
+    {
+      "slide": 36,
+      "title": "R code R/02_clusters.R  2",
+      "main": false,
+      "source": "analysis/R/02_clusters.R"
+    },
+    {
+      "slide": 37,
+      "title": "R code R/02_clusters.R  3",
+      "main": false,
+      "source": "analysis/R/02_clusters.R"
+    },
+    {
+      "slide": 38,
+      "title": "R code R/02_clusters.R  4",
+      "main": false,
+      "source": "analysis/R/02_clusters.R"
+    },
+    {
+      "slide": 39,
+      "title": "R code R/02_clusters.R  5",
+      "main": false,
+      "source": "analysis/R/02_clusters.R"
+    },
+    {
+      "slide": 40,
+      "title": "R code R/03_models.R  1",
+      "main": false,
+      "source": "analysis/R/03_models.R"
+    },
+    {
+      "slide": 41,
+      "title": "R code R/03_models.R  2",
+      "main": false,
+      "source": "analysis/R/03_models.R"
+    },
+    {
+      "slide": 42,
+      "title": "R code R/03_models.R  3",
+      "main": false,
+      "source": "analysis/R/03_models.R"
+    },
+    {
+      "slide": 43,
+      "title": "R code R/03_models.R  4",
+      "main": false,
+      "source": "analysis/R/03_models.R"
+    },
+    {
+      "slide": 44,
+      "title": "R code R/03_models.R  5",
+      "main": false,
+      "source": "analysis/R/03_models.R"
+    },
+    {
+      "slide": 45,
+      "title": "R code R/03_models.R  6",
+      "main": false,
+      "source": "analysis/R/03_models.R"
+    },
+    {
+      "slide": 46,
+      "title": "R code R/04_report.R  1",
+      "main": false,
+      "source": "analysis/R/04_report.R"
+    },
+    {
+      "slide": 47,
+      "title": "R code R/04_report.R  2",
+      "main": false,
+      "source": "analysis/R/04_report.R"
+    },
+    {
+      "slide": 48,
+      "title": "R code R/04_report.R  3",
+      "main": false,
+      "source": "analysis/R/04_report.R"
+    },
+    {
+      "slide": 49,
+      "title": "R code R/04_report.R  4",
+      "main": false,
+      "source": "analysis/R/04_report.R"
+    },
+    {
+      "slide": 50,
+      "title": "R code R/04_report.R  5",
+      "main": false,
+      "source": "analysis/R/04_report.R"
+    },
+    {
+      "slide": 51,
+      "title": "R code R/04_report.R  6",
+      "main": false,
+      "source": "analysis/R/04_report.R"
+    },
+    {
+      "slide": 52,
+      "title": "R code R/04_report.R  7",
+      "main": false,
+      "source": "analysis/R/04_report.R"
+    },
+    {
+      "slide": 53,
+      "title": "R code R/04_report.R  8",
+      "main": false,
+      "source": "analysis/R/04_report.R"
+    },
+    {
+      "slide": 54,
+      "title": "R code R/04_report.R  9",
+      "main": false,
+      "source": "analysis/R/04_report.R"
+    },
+    {
+      "slide": 55,
+      "title": "R code verify_results.R  1",
+      "main": false,
+      "source": "analysis/verify_results.R"
+    },
+    {
+      "slide": 56,
+      "title": "R code verify_results.R  2",
+      "main": false,
+      "source": "analysis/verify_results.R"
+    },
+    {
+      "slide": 57,
+      "title": "R code verify_results.R  3",
+      "main": false,
+      "source": "analysis/verify_results.R"
+    }
+  ],
+  "code": [
+    {
+      "slide": 28,
+      "file": "run_analysis.R",
+      "displayStart": 0,
+      "displayEnd": 30,
+      "sourceLines": 24
+    },
+    {
+      "slide": 29,
+      "file": "R/00_helpers.R",
+      "displayStart": 0,
+      "displayEnd": 60,
+      "sourceLines": 89
+    },
+    {
+      "slide": 30,
+      "file": "R/00_helpers.R",
+      "displayStart": 60,
+      "displayEnd": 112,
+      "sourceLines": 89
+    },
+    {
+      "slide": 31,
+      "file": "R/01_data_eda.R",
+      "displayStart": 0,
+      "displayEnd": 60,
+      "sourceLines": 142
+    },
+    {
+      "slide": 32,
+      "file": "R/01_data_eda.R",
+      "displayStart": 60,
+      "displayEnd": 120,
+      "sourceLines": 142
+    },
+    {
+      "slide": 33,
+      "file": "R/01_data_eda.R",
+      "displayStart": 120,
+      "displayEnd": 180,
+      "sourceLines": 142
+    },
+    {
+      "slide": 34,
+      "file": "R/01_data_eda.R",
+      "displayStart": 180,
+      "displayEnd": 199,
+      "sourceLines": 142
+    },
+    {
+      "slide": 35,
+      "file": "R/02_clusters.R",
+      "displayStart": 0,
+      "displayEnd": 60,
+      "sourceLines": 179
+    },
+    {
+      "slide": 36,
+      "file": "R/02_clusters.R",
+      "displayStart": 60,
+      "displayEnd": 120,
+      "sourceLines": 179
+    },
+    {
+      "slide": 37,
+      "file": "R/02_clusters.R",
+      "displayStart": 120,
+      "displayEnd": 180,
+      "sourceLines": 179
+    },
+    {
+      "slide": 38,
+      "file": "R/02_clusters.R",
+      "displayStart": 180,
+      "displayEnd": 240,
+      "sourceLines": 179
+    },
+    {
+      "slide": 39,
+      "file": "R/02_clusters.R",
+      "displayStart": 240,
+      "displayEnd": 259,
+      "sourceLines": 179
+    },
+    {
+      "slide": 40,
+      "file": "R/03_models.R",
+      "displayStart": 0,
+      "displayEnd": 60,
+      "sourceLines": 223
+    },
+    {
+      "slide": 41,
+      "file": "R/03_models.R",
+      "displayStart": 60,
+      "displayEnd": 120,
+      "sourceLines": 223
+    },
+    {
+      "slide": 42,
+      "file": "R/03_models.R",
+      "displayStart": 120,
+      "displayEnd": 180,
+      "sourceLines": 223
+    },
+    {
+      "slide": 43,
+      "file": "R/03_models.R",
+      "displayStart": 180,
+      "displayEnd": 240,
+      "sourceLines": 223
+    },
+    {
+      "slide": 44,
+      "file": "R/03_models.R",
+      "displayStart": 240,
+      "displayEnd": 300,
+      "sourceLines": 223
+    },
+    {
+      "slide": 45,
+      "file": "R/03_models.R",
+      "displayStart": 300,
+      "displayEnd": 337,
+      "sourceLines": 223
+    },
+    {
+      "slide": 46,
+      "file": "R/04_report.R",
+      "displayStart": 0,
+      "displayEnd": 60,
+      "sourceLines": 274
+    },
+    {
+      "slide": 47,
+      "file": "R/04_report.R",
+      "displayStart": 60,
+      "displayEnd": 120,
+      "sourceLines": 274
+    },
+    {
+      "slide": 48,
+      "file": "R/04_report.R",
+      "displayStart": 120,
+      "displayEnd": 180,
+      "sourceLines": 274
+    },
+    {
+      "slide": 49,
+      "file": "R/04_report.R",
+      "displayStart": 180,
+      "displayEnd": 240,
+      "sourceLines": 274
+    },
+    {
+      "slide": 50,
+      "file": "R/04_report.R",
+      "displayStart": 240,
+      "displayEnd": 300,
+      "sourceLines": 274
+    },
+    {
+      "slide": 51,
+      "file": "R/04_report.R",
+      "displayStart": 300,
+      "displayEnd": 360,
+      "sourceLines": 274
+    },
+    {
+      "slide": 52,
+      "file": "R/04_report.R",
+      "displayStart": 360,
+      "displayEnd": 420,
+      "sourceLines": 274
+    },
+    {
+      "slide": 53,
+      "file": "R/04_report.R",
+      "displayStart": 420,
+      "displayEnd": 480,
+      "sourceLines": 274
+    },
+    {
+      "slide": 54,
+      "file": "R/04_report.R",
+      "displayStart": 480,
+      "displayEnd": 520,
+      "sourceLines": 274
+    },
+    {
+      "slide": 55,
+      "file": "verify_results.R",
+      "displayStart": 0,
+      "displayEnd": 60,
+      "sourceLines": 113
+    },
+    {
+      "slide": 56,
+      "file": "verify_results.R",
+      "displayStart": 60,
+      "displayEnd": 120,
+      "sourceLines": 113
+    },
+    {
+      "slide": 57,
+      "file": "verify_results.R",
+      "displayStart": 120,
+      "displayEnd": 176,
+      "sourceLines": 113
+    }
+  ],
+  "total": 57,
+  "main": 10,
+  "appendix": 47,
+  "font": "Arial"
+}

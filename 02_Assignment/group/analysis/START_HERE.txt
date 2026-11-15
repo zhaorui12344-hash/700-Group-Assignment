@@ -1,0 +1,39 @@
+先打开 analysis_report.html 阅读完整中文结果报告。
+报告包含数据检查、单变量与双变量分析、6 群 k-means、CLV 与 Yield 回归、诊断、敏感性分析和 4 项商业建议。
+统计分析全部用 R 完成；本阶段没有制作 PPT。
+最终 63 项独立核验通过，完整重跑的 81 个 CSV 结果一致。
+图表在 plots，详细结果在 tables，所有 R 源码在 R 文件夹及入口脚本中。
+
+Assignment 3 complete R analysis
+
+Start with analysis_report.html (Chinese findings, figures and linked result tables).
+The report covers Parts 1-4. No PowerPoint slides are produced.
+
+Reproduce from a terminal:
+  Rscript --vanilla /absolute/path/to/group/analysis/run_analysis.R
+  Rscript --vanilla /absolute/path/to/group/analysis/verify_results.R
+
+RStudio alternative:
+  Set the working directory to this analysis folder.
+  source("run_analysis.R", encoding = "UTF-8")
+  source("verify_results.R", encoding = "UTF-8")
+
+Requirements: R with the recommended package cluster. Base R handles the rest.
+This project does not install packages or change the original CSV.
+The source must stay at ../Group_presentation.csv relative to this folder.
+
+R/00_helpers.R: output, effect-size, robust-inference and reporting helpers
+R/01_data_eda.R: data audit and univariate/bivariate analysis
+R/02_clusters.R: k-means, profiles and sensitivity checks
+R/03_models.R: cross-validation, regression and diagnostics
+R/04_report.R: findings report generated from the actual output
+
+tables/: detailed CSV outputs, including hypotheses/tests and recommendations
+plots/: PNG figures for later presentation preparation
+models/: fitted models and text output
+data/: derived analysis data with row references and cluster membership
+logs/: run environment and independent verification
+
+Do not equate the recorded, formula-derived CLV with observed future value.
+Do not interpret regression coefficients or cluster differences as causal effects.
+Report test metrics from the training model, not the all-data refit.

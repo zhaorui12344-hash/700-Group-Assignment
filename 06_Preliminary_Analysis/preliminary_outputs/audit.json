@@ -1,0 +1,61 @@
+{
+  "source_sha256": "daee4287841897e89bebeedc176f392fbab99f2b5f6cc0d685e61da036bf1f8c",
+  "rows": 10000,
+  "columns": [
+    "Tot_Prod",
+    "Income",
+    "No_Trans",
+    "Cat_Age",
+    "Age",
+    "Yield",
+    "CLV"
+  ],
+  "dtypes": {
+    "Tot_Prod": "int64",
+    "Income": "int64",
+    "No_Trans": "int64",
+    "Cat_Age": "int64",
+    "Age": "int64",
+    "Yield": "int64",
+    "CLV": "int64"
+  },
+  "semantic_types": {
+    "Cat_Age": "ordered category; use frequencies, not a continuous predictor",
+    "Tot_Prod": "discrete count",
+    "No_Trans": "discrete count",
+    "Age": "age in years",
+    "Income": "numeric; zero meaning uncertain",
+    "Yield": "numeric current profit; negatives valid",
+    "CLV": "derived numeric lifetime value"
+  },
+  "missing": {
+    "Tot_Prod": 0,
+    "Income": 0,
+    "No_Trans": 0,
+    "Cat_Age": 0,
+    "Age": 0,
+    "Yield": 0,
+    "CLV": 0
+  },
+  "infinite_values": 0,
+  "exact_duplicate_rows_beyond_first": 2,
+  "note_duplicates": "No customer ID is available; identical values do not prove duplicate customers.",
+  "age_outside_18_99": 0,
+  "products_outside_0_5": 0,
+  "age_categories_outside_1_6": 0,
+  "ages_mapped_to_multiple_categories": 0,
+  "income_zero_n": 1689,
+  "income_zero_percent": 16.89,
+  "zero_income_with_positive_transactions_n": 1576,
+  "negative_yield_n": 4368,
+  "negative_yield_percent": 43.68,
+  "negative_clv_n": 0,
+  "no_models_fitted": true,
+  "caveats": [
+    "Income=0 is ambiguous; no imputation or deletion has been performed.",
+    "CLV is a derived estimate with unknown formula, not observed lifetime value.",
+    "A lower CLV in young customers alone cannot establish underestimation.",
+    "Negative Yield is permitted by the assignment; it is not a data error.",
+    "No units or time period for Income are assumed beyond the supplied requirement."
+  ]
+}

@@ -1,0 +1,200 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Assignment 3 客户细分与盈利分析</title><style>body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;color:#23344d;background:#f5f7fa;margin:0;line-height:1.8}main{max-width:1140px;margin:32px auto;padding:42px 54px;background:white;border:1px solid #e1e7ee;border-radius:12px}h1{font-size:30px;line-height:1.35;color:#123859}h2{font-size:23px;margin-top:42px;padding-top:16px;border-top:1px solid #dce5ed;color:#123859}h3{font-size:18px;color:#234e70;margin-top:28px}p,li{font-size:16px}a{color:#166690}nav{background:#eef4f8;padding:16px 22px;border-radius:8px}.lead{font-size:18px}.note{border-left:4px solid #c9923d;padding:10px 18px;background:#fff8ed}.table-wrap{overflow:auto;margin:18px 0}table{border-collapse:collapse;width:100%;font-size:13px;line-height:1.55}td,th{border:1px solid #dce5ed;padding:9px 11px;text-align:left;vertical-align:top}th{background:#edf3f7;color:#163b56}tr:nth-child(even){background:#f9fbfd}figure{margin:26px 0}img{max-width:100%;height:auto}figcaption{font-size:13px;color:#56687b}th.text-column{min-width:170px}code,pre{font-family:Menlo,Consolas,monospace;font-size:13px}pre{background:#f0f4f7;padding:14px;overflow:auto}.meta{color:#63748a;font-size:14px}@media(max-width:700px){main{margin:0;padding:22px 18px;border:0}h1{font-size:25px}}@media print{body{background:white}main{margin:0;border:0;padding:0}nav{display:none}h2{break-after:avoid}figure,table{break-inside:avoid}a{color:inherit}}</style></head><body><main>
+<h1>Assignment 3<br>零售银行客户细分与盈利分析</h1>
+<p>本报告完成作业 Part 1–4 的分析与结果解释。数据为 <code>Group_presentation.csv</code>，共 10,000 条记录。分析使用 R；原始数据保持不变。本阶段没有制作 PPT。</p>
+<p class="meta">生成时间：2026-11-16 00:32 NZDT · R 4.6.1 · 原始文件 MD5：f0476691df9c6f541114756ef40a56d4</p>
+<nav>目录：<a href="#findings">主要发现</a> · <a href="#data">数据准备</a> · <a href="#eda">关系探索</a> · <a href="#clusters">客户细分</a> · <a href="#models">预测模型</a> · <a href="#actions">商业建议</a> · <a href="#limitations">限制</a> · <a href="#reproduce">复现与要求核对</a></nav>
+<h2 id="findings">1. 主要发现</h2>
+<ul><li>收入为 0 的客户有 <strong>1,689 人（16.89%）</strong>，其中 1,576 人仍有交易。它可能混合真实零收入与未记录情况，不能仅从这份数据识别每个人的原因。</li><li>主方案选择 <strong>6 个客户群</strong>，全样本平均 silhouette 为 0.316。这是有重叠的粗分群；收入处理的敏感性意味着分群不宜直接用于自动化个人决策。</li><li>C5 的平均记录 CLV 为 $4,741，C1 为 $934。当前 Yield 的差异小得多，不能把客户价值与当前利润混为一谈。</li><li>排除 Income 和 Yield 的 CLV 回归测试 R² 为 <strong>0.528</strong>，MAE 为 $486。交易数、产品数、年龄的条件关联为正；这解释的是现有 CLV 标签。</li><li>补充 Yield 模型测试 R² 为 <strong>0.060</strong>。它对当前个体利润的预测能力有限，不足以直接支持加费或差别待遇。</li><li>年轻客户的 CLV 较低，但数据没有真实未来价值或旧公式，<strong>不能证明 30 岁以下客户被低估，更不能据此统一上调其 CLV</strong>。</li></ul>
+<h2 id="data">2. 数据准备与处理决策</h2>
+<p>每行是一条客户记录，但没有客户 ID。全部 7 列均以整数存储，统计测量类型却不同；Cat_Age 是有序类别，不能因为编码是数字就当作连续变量。</p>
+<div class="table-wrap"><table><thead><tr><th class="text-column">variable</th><th class="text-column">type</th><th class="text-column">meaning</th></tr></thead><tbody><tr><td>Tot_Prod</td><td>Discrete count</td><td>Total products owned, permitted 0-5</td></tr><tr><td>Income</td><td>Numeric; ambiguous zero</td><td>Recorded income; period/unit not specified</td></tr><tr><td>No_Trans</td><td>Discrete count</td><td>Transaction count; period not specified</td></tr><tr><td>Cat_Age</td><td>Ordinal category</td><td>Observed categories 2-6; category 1 absent</td></tr><tr><td>Age</td><td>Numeric years</td><td>Age in years, 18-99</td></tr><tr><td>Yield</td><td>Numeric profit; negatives valid</td><td>Current profit in dollars, may be negative</td></tr><tr><td>CLV</td><td>Derived numeric estimate</td><td>Expected lifetime value in dollars; unknown existing formula</td></tr></tbody></table></div>
+<div class="table-wrap"><table><thead><tr><th class="text-column">variable</th><th>n</th><th>mean</th><th>sd</th><th>median</th><th>min</th><th>max</th><th>skewness</th></tr></thead><tbody><tr><td>Tot_Prod</td><td>10,000</td><td>1.36</td><td>0.62</td><td>1</td><td>1</td><td>5</td><td>1.65</td></tr><tr><td>Income</td><td>10,000</td><td>1,265.41</td><td>1,321.32</td><td>1,101</td><td>0</td><td>33,580</td><td>5.33</td></tr><tr><td>No_Trans</td><td>10,000</td><td>260.46</td><td>160.43</td><td>239</td><td>0</td><td>1,631</td><td>0.80</td></tr><tr><td>Age</td><td>10,000</td><td>47.22</td><td>17.63</td><td>45</td><td>18</td><td>99</td><td>0.45</td></tr><tr><td>Yield</td><td>10,000</td><td>158.57</td><td>696.50</td><td>28</td><td>-421</td><td>50,947</td><td>43.93</td></tr><tr><td>CLV</td><td>10,000</td><td>1,932.26</td><td>1,385.74</td><td>1,704</td><td>9</td><td>55,306</td><td>7.82</td></tr></tbody></table></div>
+<p>数据没有显式缺失值、无限值或超出要求范围的年龄。存在两条与前面记录完全相同的值组合，但没有 ID 证明它们是重复客户，因此保留。产品数观察到 1–5，年龄组观察到 2–6；不能为没有出现的类别补造记录。</p>
+<p>Yield 可为负，实际有 4,368 人（43.68%）当前亏损，属于作业允许的业务状态。Income 的时间周期和具体币种没有说明，因此不自行称其为“年收入”或“月收入”。</p>
+<h3>零收入与异常值</h3>
+<p>零收入组平均交易数为 107.0，正收入组为 291.6。这表明零记录包含活跃客户，却不能证明其必为缺失。主分析保留原值，明确标注为“记录收入”，并比较年龄组正收入中位数填补、对数变换与排除收入的替代方案。</p>
+<div class="table-wrap"><table><thead><tr><th class="text-column">variable</th><th>lower</th><th>upper</th><th>below</th><th>above</th><th>cap99</th><th>over_cap99</th></tr></thead><tbody><tr><td>Tot_Prod</td><td>-0.50</td><td>3.50</td><td>0</td><td>53</td><td>3.00</td><td>53</td></tr><tr><td>Income</td><td>-1,315.62</td><td>3,549.38</td><td>0</td><td>327</td><td>5,375.11</td><td>100</td></tr><tr><td>No_Trans</td><td>-167.50</td><td>668.50</td><td>0</td><td>150</td><td>702.04</td><td>100</td></tr><tr><td>Age</td><td>-7.50</td><td>100.50</td><td>0</td><td>0</td><td>88.00</td><td>90</td></tr><tr><td>Yield</td><td>-469.50</td><td>630.50</td><td>0</td><td>739</td><td>1,778.22</td><td>100</td></tr><tr><td>CLV</td><td>-1,063.00</td><td>4,673.00</td><td>0</td><td>280</td><td>5,788.03</td><td>100</td></tr></tbody></table></div>
+<p>IQR 超界只用于筛查。高收入、高盈利和多产品客户可能真实存在，不能机械删除。主聚类只对 Income 和 No_Trans 的上端 1% 封顶后标准化，原始列和全部客户保留；群体画像仍使用原始量纲。Tot_Prod 4–5 属于合法产品数量，即使被 IQR 标记也保留。</p>
+<p>主回归保留原始结果变量。另以训练集 99% 分位数封顶、排除训练集高 Cook 距离记录做敏感性分析，测试集始终保留原始结果。没有为了得到更漂亮的 R² 而删除难预测的测试客户。</p>
+<figure><img src="plots/01_distributions.png" alt="全范围分布显示 Income、Yield 与 CLV 的右偏。"><figcaption>全范围分布显示 Income、Yield 与 CLV 的右偏。</figcaption></figure>
+<figure><img src="plots/02_outliers.png" alt="全范围箱线图；极端值被标记，但不自动认定为错误。"><figcaption>全范围箱线图；极端值被标记，但不自动认定为错误。</figcaption></figure>
+<h3>年龄变量核对</h3>
+<div class="table-wrap"><table><thead><tr><th>Cat_Age</th><th>n</th><th>min</th><th>max</th></tr></thead><tbody><tr><td>2</td><td>2,998</td><td>18</td><td>35</td></tr><tr><td>3</td><td>3,202</td><td>36</td><td>50</td></tr><tr><td>4</td><td>1,850</td><td>51</td><td>64</td></tr><tr><td>5</td><td>1,469</td><td>65</td><td>79</td></tr><tr><td>6</td><td>481</td><td>80</td><td>99</td></tr></tbody></table></div>
+<p>实际编码与年龄范围完全一致；Cat_Age=2 包含 18–35 岁，因此不能直接用该组代表 30 岁以下。专题分析另用 Age&lt;30。模型只使用 Age，Cat_Age 留作描述画像，避免重复计权或共线性。</p>
+<figure><img src="plots/05_zero_income.png" alt="零收入分布和交易活跃度；箱线图只隐藏离群点显示，没有删除记录。"><figcaption>零收入分布和交易活跃度；箱线图只隐藏离群点显示，没有删除记录。</figcaption></figure>
+<h2 id="eda">3. 单变量与双变量探索</h2>
+<p>先按 W3 做分布与频数，再根据 W4/W6 的变量类型选择检验。数值对数值用 Pearson；Spearman 用作对极端值敏感性的补充。两组均值使用 Welch t 检验，多组采用 Welch ANOVA，并同时保存课堂经典 ANOVA；方差检查用以中位数为中心的 Brown–Forsythe 检验。</p>
+<div class="table-wrap"><table><thead><tr><th class="text-column">x</th><th class="text-column">method</th><th>r</th><th class="text-column">p_holm</th></tr></thead><tbody><tr><td>Tot_Prod</td><td>pearson</td><td>0.458</td><td>&lt;0.001</td></tr><tr><td>Tot_Prod</td><td>spearman</td><td>0.501</td><td>&lt;0.001</td></tr><tr><td>Income</td><td>pearson</td><td>0.777</td><td>&lt;0.001</td></tr><tr><td>Income</td><td>spearman</td><td>0.861</td><td>&lt;0.001</td></tr><tr><td>No_Trans</td><td>pearson</td><td>0.653</td><td>&lt;0.001</td></tr><tr><td>No_Trans</td><td>spearman</td><td>0.775</td><td>&lt;0.001</td></tr><tr><td>Age</td><td>pearson</td><td>0.054</td><td>&lt;0.001</td></tr><tr><td>Age</td><td>spearman</td><td>0.115</td><td>&lt;0.001</td></tr><tr><td>Yield</td><td>pearson</td><td>0.562</td><td>&lt;0.001</td></tr><tr><td>Yield</td><td>spearman</td><td>0.241</td><td>&lt;0.001</td></tr></tbody></table></div>
+<p>CLV 与 Income、No_Trans 和产品数存在关联。Yield 的 Pearson 与 Spearman 差异较大，说明极端值对线性相关系数影响明显。Age 与 CLV 的总体线性相关很弱，但年龄分组均值并非一条直线，因此不能据低相关就认定年龄不相关。</p>
+<figure><img src="plots/03_age_clv.png" alt="逐岁均值与分组分布用于发现非线性。左图显示至 CLV 的 99% 分位数，计算仍包含全部记录。"><figcaption>逐岁均值与分组分布用于发现非线性。左图显示至 CLV 的 99% 分位数，计算仍包含全部记录。</figcaption></figure>
+<figure><img src="plots/04_clv_associations.png" alt="CLV 与其他变量的全范围散点图；高相关可能含有原 CLV 公式的机械联系。"><figcaption>CLV 与其他变量的全范围散点图；高相关可能含有原 CLV 公式的机械联系。</figcaption></figure>
+<p>30 岁以下有 1,765 人，平均 CLV $1,246；其余客户平均 $2,079。均值差（年轻减其他）为 $-833，95% CI [-879, -786]，Welch p <0.001。年龄组也同时存在收入、产品数和交易差异，这不是低估的直接证据。</p>
+<div class="table-wrap"><table><thead><tr><th class="text-column">outcome</th><th>Welch_F</th><th class="text-column">Welch_p</th><th class="text-column">Brown_Forsythe_p</th><th>eta_squared</th></tr></thead><tbody><tr><td>CLV</td><td>269.152</td><td>&lt;0.001</td><td>&lt;0.001</td><td>0.075</td></tr><tr><td>Yield</td><td>127.860</td><td>&lt;0.001</td><td>&lt;0.001</td><td>0.023</td></tr><tr><td>Income</td><td>208.774</td><td>&lt;0.001</td><td>&lt;0.001</td><td>0.060</td></tr><tr><td>No_Trans</td><td>229.677</td><td>&lt;0.001</td><td>&lt;0.001</td><td>0.090</td></tr></tbody></table></div>
+<p>多组 CLV 比较采用逐对 Welch t 检验并用 Holm 校正；这些是对记录值的差异检验。年龄组与零收入的卡方检验 Cramér’s V 为 0.172，p <0.001，最小期望频数 81.2。详细假设、效应量和 p 值见 <a href="tables/01_welch_two_group_tests.csv">两组检验</a>、<a href="tables/01_CLV_age_posthoc_Welch_Holm.csv">CLV 组间比较</a> 与 <a href="tables/01_zero_income_chisquare.csv">卡方结果</a>。大样本下统计显著不等于业务影响很大。</p>
+<h2 id="clusters">4. k-means 客户细分</h2>
+<p>聚类输入为 Tot_Prod（关系广度）、Income（记录收入）、No_Trans（活跃度）、Age（生命周期）。Yield 与 CLV 完全不参与形成群体，只用于事后画像。所有输入进行 z-score 标准化；Cat_Age 不重复进入。</p>
+<p>比较 k=2–8，每个解使用 50 个随机起点。由于数据中存在大量重复或接近的点，采用 R 的 Lloyd 更新算法以避免默认算法的 Quick-Transfer 警告。固定种子使结果可复现，并以其他种子验证稳定性。</p>
+<p>先用相同的 2,500 条记录估计 silhouette，再对最高的两个可行方案计算全体 10,000 条记录的精确 silhouette。将至少占 2% 的群体作为可操作性参考；这是分析者的选择，不是作业硬性要求。W7 提醒微小分差不值得过度解读：分数接近时，结合群体画像、规模和可执行性判断，简单方案是重要参考。</p>
+<div class="table-wrap"><table><thead><tr><th>k</th><th>sampled_silhouette</th><th>negative_silhouette_share</th><th>smallest_n</th><th>largest_n</th><th>within_ss</th><th>between_fraction</th><th>full_silhouette</th></tr></thead><tbody><tr><td>2</td><td>0.3231</td><td>0.0332</td><td>3,349</td><td>6,651</td><td>27,254.86</td><td>0.3186</td><td>0.3205</td></tr><tr><td>3</td><td>0.3067</td><td>0.0600</td><td>2,995</td><td>4,004</td><td>20,701.65</td><td>0.4824</td><td>NA</td></tr><tr><td>4</td><td>0.3122</td><td>0.0224</td><td>1,855</td><td>3,347</td><td>16,772.11</td><td>0.5807</td><td>NA</td></tr><tr><td>5</td><td>0.3099</td><td>0.0332</td><td>789</td><td>2,802</td><td>14,525.82</td><td>0.6368</td><td>NA</td></tr><tr><td>6</td><td>0.3149</td><td>0.0228</td><td>470</td><td>2,586</td><td>13,103.72</td><td>0.6724</td><td>0.3163</td></tr><tr><td>7</td><td>0.2790</td><td>0.0388</td><td>372</td><td>2,322</td><td>12,047.78</td><td>0.6988</td><td>NA</td></tr><tr><td>8</td><td>0.2934</td><td>0.0364</td><td>381</td><td>2,300</td><td>10,991.19</td><td>0.7252</td><td>NA</td></tr></tbody></table></div>
+<figure><img src="plots/06_select_k.png" alt="同一抽样上的 silhouette 比较、候选解的精确复核及辅助 elbow 图。"><figcaption>同一抽样上的 silhouette 比较、候选解的精确复核及辅助 elbow 图。</figcaption></figure>
+<h3>为什么选择六群而不是两群</h3>
+<div class="table-wrap"><table><thead><tr><th>群数</th><th>Silhouette</th><th>最小群人数</th><th>最大群人数</th><th>各群均龄极差</th><th>最低群中位 Yield</th><th>最高群中位 Yield</th></tr></thead><tbody><tr><td>2</td><td>0.320</td><td>3,349</td><td>6,651</td><td>3.325</td><td>20</td><td>55</td></tr><tr><td>6</td><td>0.316</td><td>470</td><td>2,586</td><td>38.161</td><td>-25</td><td>118</td></tr></tbody></table></div>
+<p>两群方案的精确 silhouette 为 0.3205，六群为 0.3163，差距约 0.0042。两群足以表达大致活跃程度，但其平均年龄仅约 45 和 48 岁，且合并了不同的产品和交易组合。六群保留了单产品高交易、年长单产品、较年轻低活跃等可解释群体，最小群有 470 人（4.7%），并非由少数极端客户组成。</p>
+<p>在六群画像中，单产品高活跃群与较年轻低活跃群的 Yield 中位数均为 −25，而年长单产品群为 118。这是选择六群的重要业务理由：它揭示了两群方案掩盖的当前盈利差异。代价是管理与执行更复杂，且整体 silhouette 并未改善，因此两群仍保留为简化备选。这里使用被动盈利变量帮助解释方案，后续群间检验属于探索性描述，不能充当独立确认。</p>
+<p>最终选择 k=6，精确 silhouette 0.316，负 silhouette 的客户比例 3.1%。分群存在明显重叠，宜理解为粗分层；并非“清晰自然存在的几种人”。所有 k 的画像均已保存以便比较，不能只凭最高分解释群体。</p>
+<div class="table-wrap"><table><thead><tr><th class="text-column">Cluster</th><th class="text-column">name</th><th>n</th><th>share</th><th>Tot_Prod_mean</th><th>Income_mean</th><th>No_Trans_mean</th><th>Age_mean</th><th>Yield_mean</th><th>Yield_median</th><th>CLV_mean</th><th>negative_yield_rate</th></tr></thead><tbody><tr><td>1</td><td>较年轻·单产品低活跃客户</td><td>2,586</td><td>0.26</td><td>1.00</td><td>436.48</td><td>142.48</td><td>32.58</td><td>48.96</td><td>-25.0</td><td>933.87</td><td>0.60</td></tr><tr><td>2</td><td>多产品·中等活跃客户</td><td>1,299</td><td>0.13</td><td>2.10</td><td>951.93</td><td>218.03</td><td>39.85</td><td>197.91</td><td>80.0</td><td>1,968.43</td><td>0.35</td></tr><tr><td>3</td><td>单产品·高活跃客户</td><td>2,006</td><td>0.20</td><td>1.00</td><td>1,652.99</td><td>372.13</td><td>44.10</td><td>58.39</td><td>-25.0</td><td>2,227.83</td><td>0.56</td></tr><tr><td>4</td><td>多产品·高活跃客户</td><td>1,262</td><td>0.13</td><td>2.41</td><td>2,094.26</td><td>440.56</td><td>45.89</td><td>222.18</td><td>95.5</td><td>3,368.42</td><td>0.35</td></tr><tr><td>5</td><td>高记录收入·高活跃客户</td><td>470</td><td>0.05</td><td>1.56</td><td>4,956.06</td><td>516.13</td><td>46.11</td><td>259.96</td><td>82.0</td><td>4,741.10</td><td>0.35</td></tr><tr><td>6</td><td>年长·单产品为主客户</td><td>2,377</td><td>0.24</td><td>1.06</td><td>841.64</td><td>171.58</td><td>70.74</td><td>287.05</td><td>118.0</td><td>1,431.35</td><td>0.27</td></tr></tbody></table></div>
+<p>表中的 share 和 negative_yield_rate 是 0–1 比例。完整表提供所有数值变量的均值、中位数和标准差；Cat_Age 按类别比例呈现，另保存产品数各档比例。<a href="tables/02_cluster_age_category_proportions.csv">年龄类别比例</a> 覆盖原始变量中不能用连续均值解释的 Cat_Age。</p>
+<figure><img src="plots/07_cluster_profiles.png" alt="聚类中心为处理后的标准化值；报告中的业务画像为原始数据。"><figcaption>聚类中心为处理后的标准化值；报告中的业务画像为原始数据。</figcaption></figure>
+<figure><img src="plots/08_cluster_profitability.png" alt="均值与中位数并列，避免少数极端高利润客户掩盖典型客户状态。"><figcaption>均值与中位数并列，避免少数极端高利润客户掩盖典型客户状态。</figcaption></figure>
+<p>按人均 Yield 排序，C6 最高、C1 最低；按人均 CLV 排序，C5 最高、C1 最低。总利润还受群体规模影响：C6 贡献全部 Yield 的 43.0%。年长客户的当前盈利贡献尤其值得保留，不能因为其记录 CLV 低于高活跃群就降低服务重视程度。</p>
+<p>群体 Yield 差异 Welch p <0.001，但 η² 只有 0.02111；CLV 的 η² 为 0.503。因此这套细分对记录 CLV 的区分强于对当前利润的区分。主动输入本来就被用于形成群体，其显著性不能当成独立验证；被动 CLV 也受旧公式影响。</p>
+<h3>稳定性与收入处理敏感性</h3>
+<div class="table-wrap"><table><thead><tr><th>seed</th><th>adjusted_rand</th><th>within_ss</th></tr></thead><tbody><tr><td>11</td><td>0.9983</td><td>13,103.69</td></tr><tr><td>23</td><td>0.9996</td><td>13,103.72</td></tr><tr><td>47</td><td>0.9948</td><td>13,103.81</td></tr><tr><td>101</td><td>0.9964</td><td>13,103.71</td></tr><tr><td>2,026</td><td>0.9981</td><td>13,103.69</td></tr></tbody></table></div>
+<div class="table-wrap"><table><thead><tr><th class="text-column">scenario</th><th>adjusted_rand_vs_primary</th><th>sampled_silhouette_own_space</th><th>smallest_n</th></tr></thead><tbody><tr><td>raw_no_caps</td><td>0.8156</td><td>0.3312</td><td>54</td></tr><tr><td>capped_log_income</td><td>0.5261</td><td>0.3649</td><td>1,125</td></tr><tr><td>zeros_as_missing_imputed</td><td>0.8351</td><td>0.3182</td><td>431</td></tr><tr><td>exclude_income</td><td>0.7307</td><td>0.3849</td><td>600</td></tr></tbody></table></div>
+<p>ARI（调整兰德指数）越接近 1，表示两种分群越一致；接近 0 或负值表示一致性低。固定处理方式下不同种子的稳定，与改变处理方式后的稳定，是两件不同的事。对数收入方案与主方案明显不同，排除收入也会改变分组，说明收入如何编码是重要决策。不同处理空间的 silhouette 不宜直接作为谁“更真实”的证明。</p>
+<p>主方案选择保留记录零值，是为了不假装知道缺失机制；上端封顶是为了减弱少量极端距离。该决定需要在业务上核实收入信息后重评，报告不将任何一个分群称为唯一正确答案。</p>
+<h2 id="models">5. 预测模型及核验</h2>
+<h3>为什么以 CLV 线性回归为主</h3>
+<p>作业允许预测 Yield 或 CLV，但商业建议明确要求讨论 CLV 的关联因素。因此主模型解释记录 CLV，并以 Yield 回归补充当前盈利检查。选择线性回归以体现 W8 的系数解释、拟合与假设检查；数据中的主要关联可用较简单模型表达，没有为增加方法数量而加入 CART。</p>
+<p>CLV 是前任分析师计算的标签。主模型排除 Income 与 Yield，降低直接复现其公式的风险。No_Trans、Tot_Prod 等也可能参与原公式，因此这并不能消除目标构造问题。所有“驱动因素”在本报告中都指对现有标签的统计关联，不能解释为未来真实利润的因果驱动。</p>
+<p>按相同的 Tot_Prod、No_Trans、Age 组合分组切分，训练集 8003 行、测试集 1997 行，避免同样的主模型输入组合同时出现在两边。训练内做分组五折交叉验证；预处理敏感性所需的收入填补值与封顶值只由训练集估计。聚类使用全体客户，但聚类标签不进入预测模型，也不用于选择模型。</p>
+<p>比较线性年龄、二次年龄与 30 岁连续折线三种候选。选择仅依据训练内 CV；在最优 RMSE 的 1% 以内优先简单模型。这里保留 linear。这是一套内部验证，不是新银行、新时期或真实未来现金流上的外部验证；探索阶段已查看全体数据分布。</p>
+<div class="table-wrap"><table><thead><tr><th class="text-column">model</th><th>pooled_RMSE</th><th>weighted_MAE</th><th>fold_RMSE_sd</th><th>parameters</th></tr></thead><tbody><tr><td>linear</td><td>983.107</td><td>496.841</td><td>328.210</td><td>4</td></tr><tr><td>quadratic_age</td><td>980.944</td><td>493.882</td><td>328.474</td><td>5</td></tr><tr><td>age_hinge30</td><td>980.223</td><td>494.063</td><td>328.872</td><td>5</td></tr></tbody></table></div>
+<div class="table-wrap"><table><thead><tr><th class="text-column">model</th><th>train_n</th><th>test_n</th><th>R2_train</th><th>adjusted_R2</th><th>residual_SE</th><th>F</th><th>F_df1</th><th>F_df2</th><th>F_p</th></tr></thead><tbody><tr><td>linear</td><td>8,003</td><td>1,997</td><td>0.5067</td><td>0.5065</td><td>982.6038</td><td>2,738.768</td><td>3</td><td>7,999</td><td>&lt;0.001</td></tr></tbody></table></div>
+<div class="table-wrap"><table><thead><tr><th class="text-column">model</th><th>n</th><th>RMSE</th><th>MAE</th><th>R2</th><th>mean_error</th></tr></thead><tbody><tr><td>Training_mean_baseline</td><td>1,997</td><td>1,332.334</td><td>924.164</td><td>0.000</td><td>-15.582</td></tr><tr><td>Primary_linear</td><td>1,997</td><td>915.231</td><td>486.187</td><td>0.528</td><td>-9.250</td></tr></tbody></table></div>
+<p>相对训练均值基线，测试 RMSE 降低 31.3%；MAE 降低 47.4%。RMSE 仍较大，反映高价值尾部难以预测。测试指标属于训练模型；另存全数据重拟合模型用于最终解释，不把重拟合后的训练拟合度冒充测试表现。</p>
+<h3>系数与关联因素</h3>
+<div class="table-wrap"><table><thead><tr><th class="text-column">term</th><th>estimate</th><th>classical_se</th><th>classical_p</th><th>HC3_se</th><th>HC3_t</th><th>HC3_p</th><th>HC3_low95</th><th>HC3_high95</th></tr></thead><tbody><tr><td>(Intercept)</td><td>-272.7273</td><td>29.0643</td><td>&lt;0.001</td><td>35.7074</td><td>-7.6378</td><td>&lt;0.001</td><td>-342.7231</td><td>-202.7315</td></tr><tr><td>Tot_Prod</td><td>652.2724</td><td>18.9152</td><td>&lt;0.001</td><td>20.0504</td><td>32.5317</td><td>&lt;0.001</td><td>612.9684</td><td>691.5763</td></tr><tr><td>No_Trans</td><td>4.9733</td><td>0.0725</td><td>&lt;0.001</td><td>0.1278</td><td>38.9009</td><td>&lt;0.001</td><td>4.7227</td><td>5.2239</td></tr><tr><td>Age_c</td><td>8.9427</td><td>0.6236</td><td>&lt;0.001</td><td>0.4484</td><td>19.9423</td><td>&lt;0.001</td><td>8.0636</td><td>9.8217</td></tr></tbody></table></div>
+<p>训练模型为：CLV = -272.73 + 652.27 × Tot_Prod + 4.973 × No_Trans + 8.943 × (Age − 45)。</p>
+<p>控制模型中的其他变量后，每多一个产品与 CLV 高 $652 相关；每多 100 次交易与 CLV 高 $497 相关。这些是条件关联，不能用来承诺交叉销售或增加交易的实际增量利润。年龄系数是条件关系，不等同原始年龄组均值的走势。</p>
+<div class="table-wrap"><table><thead><tr><th class="text-column">block</th><th>partial_R2_train</th><th>incremental_R2_train</th></tr></thead><tbody><tr><td>transactions</td><td>0.3705</td><td>0.2904</td></tr><tr><td>products</td><td>0.1294</td><td>0.0733</td></tr><tr><td>age</td><td>0.0251</td><td>0.0127</td></tr></tbody></table></div>
+<p>用分块 partial R² 比较贡献，避免直接比较不同单位的原始系数。这里交易数最强，其次是产品数，再次是年龄；这是给定变量集合中的结果，不代表未观察因素不重要。</p>
+<figure><img src="plots/10_test_predictions.png" alt="测试集预测与实际记录 CLV；完整与局部视图同时保留。"><figcaption>测试集预测与实际记录 CLV；完整与局部视图同时保留。</figcaption></figure>
+<figure><img src="plots/11_adjusted_age_pattern.png" alt="保持产品数和交易不变后的年龄关联。阴影是均值估计不确定性，不是个人预测区间。"><figcaption>保持产品数和交易不变后的年龄关联。阴影是均值估计不确定性，不是个人预测区间。</figcaption></figure>
+<h3>假设、异常点与敏感性</h3>
+<div class="table-wrap"><table><thead><tr><th class="text-column">diagnostic</th><th>value</th></tr></thead><tbody><tr><td>BP_style_nR2_fitted_variance</td><td>13.72886</td></tr><tr><td>BP_style_p</td><td>0.00021</td></tr><tr><td>Residual_skewness</td><td>20.03901</td></tr><tr><td>Cook_above_4_over_n</td><td>224.00000</td></tr><tr><td>Leverage_above_2p_over_n</td><td>678.00000</td></tr><tr><td>Abs_standardized_residual_above3</td><td>76.00000</td></tr><tr><td>Max_VIF</td><td>1.11544</td></tr></tbody></table></div>
+<div class="table-wrap"><table><thead><tr><th class="text-column">term</th><th>VIF</th></tr></thead><tbody><tr><td>Tot_Prod</td><td>1.115</td></tr><tr><td>No_Trans</td><td>1.113</td></tr><tr><td>Age_c</td><td>1.008</td></tr></tbody></table></div>
+<p>VIF 较低，未显示严重共线性。残差右尾很长且存在异方差与影响点，不能宣称线性回归全部假设满足。采用 HC3 稳健标准误辅助系数推断，同时保留课堂常规标准误供比较。HC3 不会修复非线性、尾部预测误差、未知的独立性或因果识别问题。数据无客户 ID/时间信息，无法实证证明误差独立。</p>
+<figure><img src="plots/09_regression_diagnostics.png" alt="W8 四类诊断图：残差、Q–Q、Scale–Location 与杠杆/影响点。"><figcaption>W8 四类诊断图：残差、Q–Q、Scale–Location 与杠杆/影响点。</figcaption></figure>
+<div class="table-wrap"><table><thead><tr><th class="text-column">model</th><th>n</th><th>RMSE</th><th>MAE</th><th>R2</th><th>mean_error</th></tr></thead><tbody><tr><td>Primary_all_training_rows</td><td>1,997</td><td>915.231</td><td>486.187</td><td>0.528</td><td>-9.250</td></tr><tr><td>Sensitivity_training_p99_caps</td><td>1,997</td><td>924.851</td><td>482.376</td><td>0.518</td><td>-37.435</td></tr><tr><td>Sensitivity_omit_training_Cook_flags</td><td>1,997</td><td>918.619</td><td>475.266</td><td>0.525</td><td>-80.704</td></tr></tbody></table></div>
+<p>上端封顶和移除训练影响点后，产品数、交易数和年龄系数方向仍可核对于 <a href="tables/03_outlier_sensitivity_coefficients.csv">敏感性系数表</a>。这些方案不取代主结果：移除合法高价值客户会改变研究总体，且在原始测试集上的 RMSE 没有改善。</p>
+<h3>CLV 衍生公式与年轻客户专题</h3>
+<div class="table-wrap"><table><thead><tr><th class="text-column">model</th><th>n</th><th>RMSE</th><th>MAE</th><th>R2</th><th>mean_error</th></tr></thead><tbody><tr><td>Primary_excludes_Income_Yield</td><td>1,997</td><td>915.231</td><td>486.187</td><td>0.528</td><td>-9.250</td></tr><tr><td>Diagnostic_add_Income</td><td>1,997</td><td>719.659</td><td>321.001</td><td>0.708</td><td>-0.805</td></tr><tr><td>Diagnostic_Income_plus_zero_flag</td><td>1,997</td><td>719.903</td><td>321.027</td><td>0.708</td><td>-1.539</td></tr><tr><td>Diagnostic_train_age_median_imputation</td><td>1,997</td><td>721.591</td><td>323.691</td><td>0.707</td><td>1.495</td></tr><tr><td>Diagnostic_include_Income_and_Yield</td><td>1,997</td><td>266.126</td><td>191.270</td><td>0.960</td><td>8.612</td></tr></tbody></table></div>
+<p>将 Income 和 Yield 加回诊断模型后，测试 R² 升到 0.960。这与“CLV 由其他变量计算”的描述相符，但不是找回旧公式的证明，更不是模型能预测真实未来价值的证据。该模型仅作目标来源诊断。</p>
+<div class="table-wrap"><table><thead><tr><th class="text-column">specification</th><th class="text-column">term</th><th>estimate</th><th>classical_se</th><th>classical_p</th><th>HC3_se</th><th>HC3_t</th><th>HC3_p</th><th>HC3_low95</th><th>HC3_high95</th></tr></thead><tbody><tr><td>Primary predictors plus quadratic age</td><td>Under30</td><td>-197.0883</td><td>49.7941</td><td>&lt;0.001</td><td>38.5095</td><td>-5.1179</td><td>&lt;0.001</td><td>-272.5769</td><td>-121.5997</td></tr><tr><td>Also adjust Income and Yield (derived-target diagnostic)</td><td>Under30</td><td>-29.1200</td><td>13.6006</td><td>0.0323</td><td>13.0375</td><td>-2.2336</td><td>0.0255</td><td>-54.6768</td><td>-3.5631</td></tr></tbody></table></div>
+<p>加入二次年龄项后，Under30 仍表现为负关联；再调整 Income 和 Yield，差异明显减弱。其大小依赖控制变量和模型形式。因此证据支持检查旧公式及年轻客户的输入质量，无法确定低估的幅度，也不支持直接给所有年轻客户统一加值。</p>
+<h3>补充 Yield 回归</h3>
+<div class="table-wrap"><table><thead><tr><th class="text-column">model</th><th>n</th><th>RMSE</th><th>MAE</th><th>R2</th><th>mean_error</th></tr></thead><tbody><tr><td>Yield_training_mean_baseline</td><td>1,997</td><td>688.211</td><td>256.366</td><td>0.00</td><td>-10.289</td></tr><tr><td>Yield_linear</td><td>1,997</td><td>667.015</td><td>227.449</td><td>0.06</td><td>-9.217</td></tr></tbody></table></div>
+<p>补充模型排除 CLV，避免把可能包含 Yield 的衍生变量拿来预测 Yield。其测试 R² 为 0.060，说明可用变量解释当前利润的能力有限。在控制收入、年龄、产品数等因素后，交易数系数为 -0.562，95% HC3 CI [-0.799, -0.324]。这一负关联提示调查服务成本，但数据没有交易渠道、费用和成本信息，不能断言交易导致亏损。</p>
+<figure><img src="plots/12_yield_diagnostics.png" alt="补充 Yield 模型也有明显极端残差，使用限制比 CLV 主模型更强。"><figcaption>补充 Yield 模型也有明显极端残差，使用限制比 CLV 主模型更强。</figcaption></figure>
+<h2 id="actions">6. 商业建议与验证方式</h2>
+<p>以下建议把群体画像与预测模型证据连接起来。它们是应通过业务试点验证的行动方向；数据没有具体产品持有类型、客户需求、交易渠道或成本，不能推出应向某个客户销售哪一个产品。</p>
+<h3>1. 维护高活跃客户关系</h3>
+<p><strong>目标：</strong>C5：高记录收入·高活跃客户。<strong>群体证据：</strong>占客户 4.7%，占记录 CLV 11.5%；平均 CLV $4,741。</p>
+<p><strong>模型证据：</strong>主 CLV 模型交易数、产品数系数为正；该群测试 MAE $1,279。</p>
+<p><strong>行动：</strong>采用服务回访、问题优先处理和自愿留存方案，先检查客户需求与服务成本。<strong>验证：</strong>试点与对照组留存率、净 Yield、服务成本及投诉率。</p>
+<h3>2. 对少产品客户做需求导向的交叉销售试点</h3>
+<p><strong>目标：</strong>C3：单产品·高活跃客户。<strong>群体证据：</strong>平均产品数 1.00，平均 CLV $2,228。</p>
+<p><strong>模型证据：</strong>控制交易和年龄后，每多一产品与记录 CLV 高 $652 相关；95% HC3 CI [613, 692]。</p>
+<p><strong>行动：</strong>从适合的客户中随机开展小规模需求评估与产品试点，不能只凭分群推销具体产品。<strong>验证：</strong>试点与对照组适配产品采纳率、净 Yield、客户投诉；不能把模型系数当增量收益承诺。</p>
+<h3>3. 检查高交易客户的服务成本</h3>
+<p><strong>目标：</strong>C3中的高频交易客户。<strong>群体证据：</strong>平均交易 372，亏损客户比例 56.2%。</p>
+<p><strong>模型证据：</strong>补充 Yield 模型中每 100 次交易与 Yield 变化 $-56 相关；但测试 R² 仅 0.060。</p>
+<p><strong>行动：</strong>调查交易渠道与单次服务成本，测试自愿数字渠道支持；暂不直接按模型提高费用。<strong>验证：</strong>单位交易成本、客户净 Yield、渠道使用及服务可达性。</p>
+<h3>4. 先核实零收入记录，再更新客户价值判断</h3>
+<p><strong>目标：</strong>C1中的零收入记录客户。<strong>群体证据：</strong>该群零收入比例 39.7%；零收入不能等同没有经济能力。</p>
+<p><strong>模型证据：</strong>加入收入后测试 CLV R² 从 0.528 升至 0.708；收益可能来自旧 CLV 公式，不能视作真实终身价值验证。</p>
+<p><strong>行动：</strong>区分无收入、未申报、未更新等原因，记录来源与时间；不得用推测收入覆盖原始值。<strong>验证：</strong>经确认记录比例、收入状态变化、重新分群稳定性和价值估计变化。</p>
+<h2 id="limitations">7. 结论的适用范围</h2>
+<ul><li>这是一份无采样说明、无客户 ID、无时间跨度的数据；不能证明代表银行全体客户，也无法验证真实生命周期结果。</li><li>Income=0 的真实原因未知；极端值未获业务核实。所有处理均为可复查的分析选择。</li><li>分群存在重叠且对收入处理敏感，不能把某一客户的群标签看作永久属性。</li><li>CLV 为衍生标签，良好拟合可能来自旧公式结构；模型没有识别营销行动的因果收益。</li><li>两个回归均存在长尾和异方差。测试集表现只描述本次内部切分，个体层面的预测尤其是极端高值不可靠。</li><li>主张“年轻客户被低估”需要旧公式、纵向实际利润或其他可信价值基准；目前证据不足。</li></ul>
+<h2 id="reproduce">8. 复现、文件说明与作业要求核对</h2>
+<p>在装有 R 的电脑上运行以下命令。只依赖随 R 通常安装的推荐包 cluster，当前机器已经具备；没有新增 R 包，也没有访问外部数据。脚本不安装软件、不覆盖原始 CSV。</p>
+<pre>Rscript --vanilla run_analysis.R
+Rscript --vanilla verify_results.R</pre>
+<p>主入口会重新生成 tables、plots、models、data 和本 HTML。<code>models/regression.rds</code> 同时保留训练模型和全数据重拟合模型；<code>logs/sessionInfo.txt</code> 记录环境。验证结果见 <a href="logs/verification.txt">verification.txt</a>。</p>
+<ul><li><a href="run_analysis.R">run_analysis.R</a>：主入口。</li><li><a href="R/01_data_eda.R">01_data_eda.R</a>：数据检查与探索。</li><li><a href="R/02_clusters.R">02_clusters.R</a>：聚类与稳定性。</li><li><a href="R/03_models.R">03_models.R</a>：预测与诊断。</li><li><a href="R/04_report.R">04_report.R</a>：用真实结果生成本报告。</li><li><a href="verify_results.R">verify_results.R</a>：独立核验。</li></ul>
+<div class="table-wrap"><table><thead><tr><th class="text-column">week</th><th class="text-column">application</th></tr></thead><tbody><tr><td>W3</td><td>变量测量水平、频数、均值/中位数/标准差、偏态、z-score。</td></tr><tr><td>W4</td><td>Welch 两样本 t 检验；年龄组与零收入的卡方检验；关联与因果的区分。</td></tr><tr><td>W6</td><td>Pearson 相关、ANOVA、方差检查与组间比较；用分组避免遗漏非线性。</td></tr><tr><td>W7</td><td>k-means、标准化、silhouette、比较不同 k、主动与被动变量画像、命名。</td></tr><tr><td>W8</td><td>lm、回归系数、R²/调整 R²、F 检验、VIF、残差及影响点检查。</td></tr><tr><td>有明确用途的补充方法</td><td>Spearman 检查极端值影响；Welch/Holm 处理方差不齐和多重比较；分组交叉验证与测试集评估泛化；HC3 检查异方差下推断；ARI 检查分群稳定性。</td></tr></tbody></table></div>
+<div class="table-wrap"><table><thead><tr><th class="text-column">requirement</th><th class="text-column">evidence</th><th class="text-column">status</th></tr></thead><tbody><tr><td>Part1: records, variable types and summaries</td><td>01_data_dictionary; 01_univariate_summary</td><td>完成</td></tr><tr><td>Part1: investigate Income=0</td><td>01_zero_income_profile; 02_preprocessing_sensitivity</td><td>完成</td></tr><tr><td>Part1: outlier decision</td><td>01_outlier_screening; 03_outlier_sensitivity_metrics</td><td>完成</td></tr><tr><td>Part1: Age/Cat_Age</td><td>01_age_category_mapping; selected model inputs</td><td>完成</td></tr><tr><td>Part1: CLV bivariate and under30</td><td>01_correlations_tests; 01_welch_two_group_tests; 03_under30_adjusted_association</td><td>完成</td></tr><tr><td>Part2: justify inputs and exclude outcomes</td><td>02_cluster_input_correlations; R/02_clusters.R</td><td>完成</td></tr><tr><td>Part2: standardisation and alternative k</td><td>02_k_comparison; 02_selected_quality</td><td>完成</td></tr><tr><td>Part2: all variable profiles, sizes and names</td><td>02_cluster_profiles; 02_cluster_age_category_proportions</td><td>完成</td></tr><tr><td>Part3: justified predictive model and outputs</td><td>03_CV_model_comparison; 03_primary_test_metrics; models/primary_summary.txt</td><td>完成</td></tr><tr><td>Part3: diagnostics and target provenance</td><td>03_primary_diagnostics; 03_CLV_target_provenance_sensitivity</td><td>完成</td></tr><tr><td>Part4: most/least profitable and CLV drivers</td><td>02_cluster_profiles; 03_predictor_contributions</td><td>完成</td></tr><tr><td>Part4: at least three evidence-linked actions</td><td>04_business_recommendations</td><td>完成</td></tr><tr><td>Part5: presentation slides</td><td>Deferred at user's explicit request</td><td>本阶段不制作</td></tr></tbody></table></div>
+<p>补充方法均对应实际问题：分组 CV 防止相同输入组合跨训练/测试，HC3 针对异方差，ARI 揭示分群敏感性。没有引入与作业目标无关的复杂算法。课件中的方法按其统计适用条件使用，未机械套用所有检验。</p>
+<h3>资料来源</h3><ul><li>group/assignment requirement.docx：四张作业要求与评分标准截图。</li><li>group/Group_presentation.csv：唯一分析数据。</li><li>W3、w4、W6、W7、W8 讲义和相关实验材料：描述统计、双变量分析、聚类和回归。</li><li>本地 R 帮助：stats::lm、stats::kmeans、stats::t.test、stats::oneway.test、cluster::silhouette。</li></ul>
+<h3>全部结果表</h3><ul>
+<li><a href="tables/01_age_band_anova.csv">01_age_band_anova.csv</a></li>
+<li><a href="tables/01_age_band_profile.csv">01_age_band_profile.csv</a></li>
+<li><a href="tables/01_age_category_mapping.csv">01_age_category_mapping.csv</a></li>
+<li><a href="tables/01_CLV_age_posthoc_Welch_Holm.csv">01_CLV_age_posthoc_Welch_Holm.csv</a></li>
+<li><a href="tables/01_correlations_tests.csv">01_correlations_tests.csv</a></li>
+<li><a href="tables/01_data_audit.csv">01_data_audit.csv</a></li>
+<li><a href="tables/01_data_dictionary.csv">01_data_dictionary.csv</a></li>
+<li><a href="tables/01_exact_age_profile.csv">01_exact_age_profile.csv</a></li>
+<li><a href="tables/01_frequency_Cat_Age.csv">01_frequency_Cat_Age.csv</a></li>
+<li><a href="tables/01_frequency_Tot_Prod.csv">01_frequency_Tot_Prod.csv</a></li>
+<li><a href="tables/01_outlier_screening.csv">01_outlier_screening.csv</a></li>
+<li><a href="tables/01_pearson_matrix.csv">01_pearson_matrix.csv</a></li>
+<li><a href="tables/01_spearman_matrix.csv">01_spearman_matrix.csv</a></li>
+<li><a href="tables/01_top10_CLV.csv">01_top10_CLV.csv</a></li>
+<li><a href="tables/01_top10_Income.csv">01_top10_Income.csv</a></li>
+<li><a href="tables/01_top10_No_Trans.csv">01_top10_No_Trans.csv</a></li>
+<li><a href="tables/01_top10_Yield.csv">01_top10_Yield.csv</a></li>
+<li><a href="tables/01_under30_profile.csv">01_under30_profile.csv</a></li>
+<li><a href="tables/01_univariate_summary.csv">01_univariate_summary.csv</a></li>
+<li><a href="tables/01_welch_two_group_tests.csv">01_welch_two_group_tests.csv</a></li>
+<li><a href="tables/01_without_max_yield_correlation.csv">01_without_max_yield_correlation.csv</a></li>
+<li><a href="tables/01_zero_income_by_age.csv">01_zero_income_by_age.csv</a></li>
+<li><a href="tables/01_zero_income_chisquare.csv">01_zero_income_chisquare.csv</a></li>
+<li><a href="tables/01_zero_income_profile.csv">01_zero_income_profile.csv</a></li>
+<li><a href="tables/02_candidate_k2_profiles.csv">02_candidate_k2_profiles.csv</a></li>
+<li><a href="tables/02_candidate_k3_profiles.csv">02_candidate_k3_profiles.csv</a></li>
+<li><a href="tables/02_candidate_k4_profiles.csv">02_candidate_k4_profiles.csv</a></li>
+<li><a href="tables/02_candidate_k5_profiles.csv">02_candidate_k5_profiles.csv</a></li>
+<li><a href="tables/02_candidate_k6_profiles.csv">02_candidate_k6_profiles.csv</a></li>
+<li><a href="tables/02_candidate_k7_profiles.csv">02_candidate_k7_profiles.csv</a></li>
+<li><a href="tables/02_candidate_k8_profiles.csv">02_candidate_k8_profiles.csv</a></li>
+<li><a href="tables/02_cluster_age_category_proportions.csv">02_cluster_age_category_proportions.csv</a></li>
+<li><a href="tables/02_cluster_input_caps.csv">02_cluster_input_caps.csv</a></li>
+<li><a href="tables/02_cluster_input_correlations.csv">02_cluster_input_correlations.csv</a></li>
+<li><a href="tables/02_cluster_membership.csv">02_cluster_membership.csv</a></li>
+<li><a href="tables/02_cluster_product_count_proportions.csv">02_cluster_product_count_proportions.csv</a></li>
+<li><a href="tables/02_cluster_profiles.csv">02_cluster_profiles.csv</a></li>
+<li><a href="tables/02_cluster_standardised_centers.csv">02_cluster_standardised_centers.csv</a></li>
+<li><a href="tables/02_CLV_posthoc_Welch_Holm.csv">02_CLV_posthoc_Welch_Holm.csv</a></li>
+<li><a href="tables/02_k_comparison.csv">02_k_comparison.csv</a></li>
+<li><a href="tables/02_passive_outcome_comparisons.csv">02_passive_outcome_comparisons.csv</a></li>
+<li><a href="tables/02_preprocessing_sensitivity.csv">02_preprocessing_sensitivity.csv</a></li>
+<li><a href="tables/02_seed_stability.csv">02_seed_stability.csv</a></li>
+<li><a href="tables/02_selected_quality.csv">02_selected_quality.csv</a></li>
+<li><a href="tables/02_sensitivity_capped_log_income_profiles.csv">02_sensitivity_capped_log_income_profiles.csv</a></li>
+<li><a href="tables/02_sensitivity_exclude_income_profiles.csv">02_sensitivity_exclude_income_profiles.csv</a></li>
+<li><a href="tables/02_sensitivity_raw_no_caps_profiles.csv">02_sensitivity_raw_no_caps_profiles.csv</a></li>
+<li><a href="tables/02_sensitivity_zeros_as_missing_imputed_profiles.csv">02_sensitivity_zeros_as_missing_imputed_profiles.csv</a></li>
+<li><a href="tables/02_shortlist_profile_comparison.csv">02_shortlist_profile_comparison.csv</a></li>
+<li><a href="tables/02_Yield_posthoc_Welch_Holm.csv">02_Yield_posthoc_Welch_Holm.csv</a></li>
+<li><a href="tables/03_CLV_target_provenance_sensitivity.csv">03_CLV_target_provenance_sensitivity.csv</a></li>
+<li><a href="tables/03_CLV_test_error_by_cluster.csv">03_CLV_test_error_by_cluster.csv</a></li>
+<li><a href="tables/03_CLV_test_error_by_under30.csv">03_CLV_test_error_by_under30.csv</a></li>
+<li><a href="tables/03_CV_fold_metrics.csv">03_CV_fold_metrics.csv</a></li>
+<li><a href="tables/03_CV_model_comparison.csv">03_CV_model_comparison.csv</a></li>
+<li><a href="tables/03_final_all_data_coefficients_HC3.csv">03_final_all_data_coefficients_HC3.csv</a></li>
+<li><a href="tables/03_formula_reconstruction_coefficients.csv">03_formula_reconstruction_coefficients.csv</a></li>
+<li><a href="tables/03_influence_records.csv">03_influence_records.csv</a></li>
+<li><a href="tables/03_outlier_sensitivity_coefficients.csv">03_outlier_sensitivity_coefficients.csv</a></li>
+<li><a href="tables/03_outlier_sensitivity_metrics.csv">03_outlier_sensitivity_metrics.csv</a></li>
+<li><a href="tables/03_partition_assignment.csv">03_partition_assignment.csv</a></li>
+<li><a href="tables/03_partition_profiles.csv">03_partition_profiles.csv</a></li>
+<li><a href="tables/03_predictor_contributions.csv">03_predictor_contributions.csv</a></li>
+<li><a href="tables/03_primary_coefficients_HC3.csv">03_primary_coefficients_HC3.csv</a></li>
+<li><a href="tables/03_primary_diagnostics.csv">03_primary_diagnostics.csv</a></li>
+<li><a href="tables/03_primary_test_metrics.csv">03_primary_test_metrics.csv</a></li>
+<li><a href="tables/03_primary_training_fit.csv">03_primary_training_fit.csv</a></li>
+<li><a href="tables/03_primary_VIF.csv">03_primary_VIF.csv</a></li>
+<li><a href="tables/03_test_predictions.csv">03_test_predictions.csv</a></li>
+<li><a href="tables/03_training_only_caps.csv">03_training_only_caps.csv</a></li>
+<li><a href="tables/03_under30_adjusted_association.csv">03_under30_adjusted_association.csv</a></li>
+<li><a href="tables/03_Yield_coefficients_HC3.csv">03_Yield_coefficients_HC3.csv</a></li>
+<li><a href="tables/03_Yield_CV.csv">03_Yield_CV.csv</a></li>
+<li><a href="tables/03_Yield_test_metrics.csv">03_Yield_test_metrics.csv</a></li>
+<li><a href="tables/03_Yield_VIF.csv">03_Yield_VIF.csv</a></li>
+<li><a href="tables/04_analysis_decisions.csv">04_analysis_decisions.csv</a></li>
+<li><a href="tables/04_business_recommendations.csv">04_business_recommendations.csv</a></li>
+<li><a href="tables/04_course_mapping.csv">04_course_mapping.csv</a></li>
+<li><a href="tables/04_requirement_checklist.csv">04_requirement_checklist.csv</a></li>
+</ul></main></body></html>

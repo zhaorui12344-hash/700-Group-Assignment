@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "artifacts": [
+    {
+      "file": "Assignment3_Final_Presentation_English.pptx",
+      "main_slides": 10,
+      "appendix_slides": 47,
+      "notes": 57,
+      "native_tables": 17,
+      "native_charts": 3,
+      "sha256": "094a426beac7f5df2861d9d80027c48c277cb59055515382a689286e920c611c"
+    },
+    {
+      "file": "Assignment3_最终演示_中文版.pptx",
+      "main_slides": 10,
+      "appendix_slides": 47,
+      "notes": 57,
+      "native_tables": 17,
+      "native_charts": 3,
+      "sha256": "b23085d558119bec1f66d691ff9c227bf63b66d5663775855db93ea696ccf5c1"
+    },
+    {
+      "file": "Assignment3_Learning_Guide_English.docx",
+      "lessons": 20,
+      "rendered_pages": 29,
+      "sha256": "38d7f4e13ec1cbe1cd298c8d8004583e73dcd713731739ff454b06c8705d24d0"
+    },
+    {
+      "file": "Assignment3_学习指南_中文版.docx",
+      "lessons": 20,
+      "rendered_pages": 29,
+      "sha256": "2e041eb60040bd3b6c00b48d244aa28a874936c9d25ed1738f985c7920bfbf50"
+    }
+  ],
+  "main_speaking_seconds": 600,
+  "independent_visual_review": "Both languages: all 57 deck slides and all 29 guide pages reviewed; corrected affected English final pages rechecked.",
+  "scope": "Structural and rendered checks; no claim of native Microsoft PowerPoint execution."
+}

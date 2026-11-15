@@ -1,0 +1,66 @@
+import json
+from pathlib import Path
+B=Path(__file__).resolve().parent
+slides=[]
+def add(kind,zh,en,bodyzh,bodyen,noteszh,notesen,source,seconds,**kw):
+ slides.append(dict(kind=kind,title={'zh':zh,'en':en},body={'zh':bodyzh,'en':bodyen},notes={'zh':noteszh,'en':notesen},source=source,seconds=seconds,**kw))
+add('cover','零售银行客户细分与盈利分析','Customer segmentation\nand bank profitability',
+ ['10,000 条记录的分析','哪些客户群体不同？哪些特征与价值有关？'],['An analysis of 10,000 customer records','Which customer groups differ, and which characteristics relate to value?'],
+ '今天的目标是回答管理层的两个问题：客户之间有哪些值得关注的差异，哪些特征与当前利润和记录中的长期价值有关。我们先处理零收入和极端值，再进行客户分群与回归，最后提出可以试点的建议。这里需要先说明，Yield 是当前利润，而 CLV 是旧公式生成的预期值；我们没有真实未来利润，所以不会把旧 CLV 当作已经验证的未来价值。接下来的主讲约十分钟，详细方法、结果和 R 代码都在附录。',
+ 'We address two management questions: how customer groups differ, and which characteristics relate to current profit and recorded lifetime value. We first investigate ambiguous income zeros and extreme values, then develop customer segments and regression models, and finish with testable business actions. Yield measures current profit. CLV is an existing estimate produced by an unavailable formula. We therefore distinguish explaining that recorded estimate from validating genuine future value. The main presentation takes approximately ten minutes. Technical outputs and the complete R source are in the appendix for questions.',
+ 'Assignment requirement.docx, Parts 1–5; analysis/tables/01_data_audit.csv',60)
+add('audit','数据检查影响后续解释','Data quality shapes the analysis',
+ ['16.89% 的 Income 记录为零','43.68% 的 Yield 为负','保留全部记录与原始盈利结果','聚类仅限制收入和交易次数的极高值'],
+ ['16.89% of Income records are zero','43.68% of Yield values are negative','All records and original outcomes retained','Only extreme income and transactions capped for clustering'],
+ '共有一万条记录和七个原始变量，没有显式缺失值，但零收入仍有含义不明的问题。1,689 条记录收入为零，其中 1,576 条仍有交易，这说明不能简单把这些客户视为不活跃，也不能证明他们一定有收入。负利润是题目允许的真实业务情况，不能直接删除。我们保留原数据，在聚类使用的副本中限制收入和交易的极高值，再标准化。年龄类别由年龄决定，所以只让数值年龄进入模型，避免重复强调同一信息。',
+ 'The file has 10,000 records and seven original variables. There are no explicit missing values, but 1,689 income records are zero and their meaning is ambiguous. Of these, 1,576 still show transactions. That demonstrates ongoing banking activity, not necessarily earned income. Negative profit is explicitly permitted, so we retain it. We preserve every record and original outcome. For clustering only, we cap the top one percent of income and transaction values and standardise the inputs. We use numeric Age rather than both Age and its category code, avoiding duplicated information.',
+ '01_data_audit.csv; 01_zero_income_profile.csv; 01_age_category_mapping.csv; 02_cluster_input_caps.csv; W3 slides 7–11, 23, 33–35; W7 slides 15–16',60)
+add('agechart','年轻客户的记录 CLV 较低','Younger customers have lower recorded CLV',
+ ['30 岁以下：平均 $1,246','其他客户：平均 $2,079','观察到标签差异，尚不能证明真实价值被低估'],
+ ['Under 30: mean $1,246','Other customers: mean $2,079','A difference in recorded estimates leaves true undervaluation unresolved'],
+ '探索分析显示，年轻客户的平均记录 CLV 较低，差距约 833 美元。图中年龄与 CLV 并非简单直线，中年记录价值通常较高。收入、交易和产品数与 CLV 呈正关联，其中收入关系尤其明显。不过旧 CLV 本来可能就使用这些变量计算，因此高相关并不能证明因果。作业中特别提出年轻客户可能被低估，我们只能确认其记录值较低。要检验是否低估，还需要真实后续利润或旧公式。我们不会据此直接统一上调年轻客户的价值。',
+ 'Exploration shows an average recorded CLV gap of approximately $833 between under-30 and other records. The age-band chart also reveals a curved pattern, with higher values in middle age. Income, transactions and product counts are positively associated with CLV, especially income. These relationships may partly reflect how the old formula constructed CLV. They do not establish causation. The concern about younger customers is therefore an audit question: their recorded estimates are lower, but proving underestimation requires later realised profit or the original formula. An automatic uplift is not supported.',
+ '01_age_band_profile.csv; 01_welch_two_group_tests.csv; 01_correlations_tests.csv; W4 slides 11–17; W6 slides 9–16, 19–24',60)
+add('selection','六群保留了更多可解释差异','Six groups retain meaningful profile differences',
+ ['输入：产品数、记录收入、交易次数、年龄','Yield 与 CLV 只用于事后画像','两群分离稍高，六群提供更细的年龄与产品画像','六群仍有重叠，最小群为 470 人'],
+ ['Inputs: products, recorded income, transactions and age','Yield and CLV reserved for profiling','Two groups separate slightly better; six reveal richer profiles','Groups overlap, with 470 records in the smallest group'],
+ '我们比较了二到八群。四个输入分别代表产品关系、记录收入、活跃度和生命周期，并标准化到可比较尺度。Yield 和 CLV 完全不参与分组。精确 silhouette 在两群是 0.3205，六群是 0.3163，差距很小。课堂一般建议接近时选择更简单的方案，所以两群保留为备选。这里按照作业对画像的要求选择六群，因为它保留单产品高活跃与年长客户等不同模式。分群的分离程度仍弱，不能当成六种清晰天然的人群。',
+ 'We compare two through eight clusters using four standardised inputs representing products, income, activity and life stage. Yield and CLV do not define the groups. Exact silhouette is 0.3205 for two groups and 0.3163 for six, a small difference. The course generally favours simpler solutions when scores are close, so two groups remain a defensible alternative. We select six after inspecting profiles because they preserve distinct single-product activity and older-customer patterns. This choice adds complexity and does not improve separation. The weak separation means these are overlapping descriptive segments rather than six natural customer types.',
+ '02_k_comparison.csv; 02_shortlist_profile_comparison.csv; 02_selected_quality.csv; W7 slides 18–21',60)
+add('profiles','六个客户群的规模与特征','The six customer profiles',
+ ['画像使用原始单位；群号没有优劣顺序'],['Profiles use original units. Group numbers are not rankings.'],
+ '请先看群体规模，再看名称和活动特点。C1 是较年轻、单产品且低活跃的客户。C2 有多个产品，活跃程度中等。C3 只有一个产品，却交易很多。C4 同时有多个产品及较高活跃度。C5 记录收入和活跃度最高，但只有 470 人。C6 平均年龄约 71 岁，主要持有一个产品。这些描述是群体平均画像，不能保证其中每个客户都符合。我们还在附录报告每个原始变量的均值，以及年龄类别的比例，避免只挑有利的特征描述。',
+ 'Read group size before interpreting the names. C1 is younger, single-product and relatively inactive. C2 combines multiple products with moderate activity. C3 holds one product but transacts frequently. C4 combines multiple products and high activity. C5 has high recorded income and activity but only 470 records. C6 averages about age 71 and mainly holds one product. These are group averages rather than rules that every member follows. The appendix reports means for every original numeric variable and age-category proportions so that the profiles can be checked without selecting only convenient features.',
+ '02_cluster_profiles.csv; 02_cluster_age_category_proportions.csv; W7 slides 24–30',60)
+add('model','简洁模型解释部分记录 CLV 差异','A simple model explains part of recorded CLV',
+ ['测试 R²  0.528','平均绝对误差  $486','相同其他条件下，产品数、交易和年龄均为正关联','主模型排除 Income 和 Yield'],
+ ['Test R²  0.528','Mean absolute error  $486','Products, transactions and age show positive conditional associations','The primary model excludes Income and Yield'],
+ '预测部分选择课堂的线性回归来解释记录 CLV，主要考虑它容易解释。我们只用训练集比较简单年龄线性、二次项及折线方案，误差很接近，所以保留较简单方案。测试集为 1,997 条未参与训练的记录。R² 为 0.528，平均绝对误差约 486 美元，说明模型能解释部分差异，但个体误差仍明显。在其他已纳入条件相同的比较中，产品数、交易和年龄系数为正。主模型排除收入和当前利润，降低只是复制旧 CLV 公式的风险。',
+ 'We choose linear regression to explain recorded CLV because it is interpretable and appropriate for a numeric outcome. Training-only validation compares linear, quadratic and hinge-age forms. Their errors are similar, so the simpler form remains. On 1,997 held-out records, R² is 0.528 and mean absolute error approximately $486. This is useful explanatory information with substantial individual uncertainty. Product counts, transactions and age have positive conditional associations. We exclude Income and Yield from the primary model to reduce dependence on potential ingredients of the old formula. These coefficients describe associations, not causal returns.',
+ '03_CV_model_comparison.csv; 03_primary_coefficients_HC3.csv; 03_primary_test_metrics.csv; W8 slides 20–26',60)
+add('limitations','模型的限制影响结论范围','Model limitations bound the conclusions',
+ ['少数很高的 CLV 仍难预测','残差长尾且方差不齐，采用 HC3 稳健区间','Yield 测试 R² 仅 0.060','加入更多旧公式相关变量可提高拟合，但不能验证未来价值'],
+ ['Very high CLV remains difficult to predict','Long-tailed, unequal errors motivate robust HC3 intervals','Yield test R² is only 0.060','Better reconstruction of the old label does not validate future value'],
+ '模型完成后，我们检查残差、影响点和变量重复信息。最大 VIF 约 1.12，并没有明显的重复预测信息问题；不过误差存在严重长尾和方差不齐，所以采用稳健区间，并比较异常值处理方案。处理后的方案没有在测试误差上明显改善主模型。补充 Yield 模型的测试 R² 只有 0.060，说明当前个体利润预测较弱。加入收入和 Yield 的诊断模型可以把旧 CLV 拟合得更好，但这种成绩可能只是重构旧公式。这里的结果不能当成真实未来收益验证。',
+ 'After fitting, we inspect residuals, influential records and predictor redundancy. Maximum VIF is about 1.12, so redundancy is limited. However, errors are strongly long-tailed and heteroscedastic. We therefore report robust HC3 intervals and compare outlier treatments. These alternatives do not improve the primary test RMSE. The supplementary Yield model has test R² only 0.060, indicating weak prediction of individual current profit. Adding Income and Yield can greatly improve reconstruction of recorded CLV, but that may reflect the old formula. It provides no independent validation of future customer value.',
+ '03_primary_diagnostics.csv; 03_primary_VIF.csv; 03_outlier_sensitivity_metrics.csv; 03_Yield_test_metrics.csv; 03_CLV_target_provenance_sensitivity.csv; W8 slides 27–30',60)
+add('profit','当前盈利与记录长期价值的排序不同','Current profit and recorded lifetime value differ',
+ ['当前平均 Yield：C6 最高，C1 最低','平均记录 CLV：C5 最高，C1 最低','C3 平均 Yield 为正，但 56.2% 的客户亏损'],
+ ['Mean current Yield: C6 highest, C1 lowest','Mean recorded CLV: C5 highest, C1 lowest','C3 has positive mean Yield, yet 56.2% of its records show losses'],
+ '进入管理建议前，先把两种盈利指标分开。按当前人均利润，C6 最高约 287 美元，C1 最低约 49 美元。C6 还贡献全部利润的约 43%。按记录 CLV，C5 最高约 4,741 美元，C1 最低约 934 美元。需要注意 C3，平均利润虽为正，但中位数是负 25 美元，超过一半客户亏损。回归中交易数的额外解释贡献最大，产品次之、年龄再次。不同单位的原始系数不能直接比大小。接下来的行动同时使用群体画像和模型证据。',
+ 'Before recommendations, separate current profit from recorded lifetime value. C6 has the highest mean current Yield, about $287, while C1 is lowest at about $49. C6 also contributes approximately 43% of total Yield. For recorded CLV, C5 is highest at about $4,741 and C1 lowest at about $934. C3 deserves attention: its mean Yield is positive but the median is −$25 and more than half its records show losses. Conditional explanatory contribution in the CLV model is greatest for transactions, then products and age. These patterns guide the actions that follow.',
+ '02_cluster_profiles.csv; 03_predictor_contributions.csv; Requirement, Part 4.1',60)
+add('actions','三个有证据支持的业务试点','Three business pilots supported by the evidence',
+ ['C5 客户关系维护','C3 需求导向的产品试点','C3 交易渠道与成本调查'],
+ ['Relationship support for C5','Needs-based product pilot for C3','Channel and cost investigation for C3'],
+ '第一，针对 C5 进行自愿服务回访。它的记录 CLV 高，模型中产品和交易也呈正关联，但该群个体误差较大，因此先看留存、净利润与投诉。第二，C3 平均只有一个产品却交易活跃，可以做需求导向的交叉销售试点。产品系数约 652 美元提供关联证据，不能当成销售后的增量收益承诺。第三，C3 的亏损比例高，补充 Yield 模型也出现负交易系数，值得检查渠道和服务成本。不过 Yield 模型弱，因此先测试渠道支持，不直接加费。三项行动都应有对照和明确评价指标。',
+ 'First, pilot voluntary relationship reviews for C5. Its high recorded CLV and positive product and transaction associations support the investigation, but individual error is substantial. Measure retention, net profit and complaints. Second, C3 has one product and high activity, making a needs-based cross-selling pilot worth testing. The approximately $652 product coefficient is association evidence, not a promised incremental return. Third, C3 has a high loss rate, while the supplementary Yield model shows a negative transaction coefficient. Investigate channels and service costs. Because that model is weak, test support before changing fees. Each pilot needs a control and explicit outcomes.',
+ '04_business_recommendations.csv; 03_primary_coefficients_HC3.csv; 03_Yield_coefficients_HC3.csv; 03_CLV_test_error_by_cluster.csv; Requirement, Part 4.2',80)
+add('conclusion','先核实数据，再评估试点成效','Data verification and pilot evaluation come next',
+ ['C1：核实 39.7% 的零收入记录','加入 Income 后记录 CLV 拟合改善，提示记录质量重要','用后续真实收益检查价值判断','保留两群备选，不自动定价或上调年轻客户 CLV'],
+ ['C1: verify its 39.7% zero-income records','Improved CLV fit with Income highlights recording quality','Evaluate value estimates against later realised profit','Retain the two-group alternative and avoid automatic pricing or age uplifts'],
+ '最后，优先核实 C1 的零收入信息，这个群零值比例接近四成。收入能明显改善对旧 CLV 的拟合，说明记录质量会影响价值判断，但填补不能代替确认。完成数据核实后，再评价客户试点，并用后续真实收益检验价值估计。我们的结论是六群提供了有用但重叠的画像，CLV 回归解释了一部分旧标签差异，当前利润模型仍弱。因此建议从可评估的小试点开始，并保留更简单的两群方案作为执行备选。',
+ 'Finally, verify C1’s income records: nearly four in ten are zero. Income improves the fit to old CLV, making recording quality relevant, although imputation is not confirmation. After verification, evaluate controlled pilots and compare value estimates with later realised profit. Six groups provide useful but overlapping profiles, and regression explains part of the old CLV label. Current-profit prediction remains weak. The next step is therefore measured experimentation, with the simpler two-group solution retained as an implementation alternative.',
+ '04_business_recommendations.csv; 02_preprocessing_sensitivity.csv; 03_CLV_target_provenance_sensitivity.csv; Requirement, Part 4',40)
+(B/'main_slides.json').write_text(json.dumps(slides,ensure_ascii=False,indent=2),encoding='utf-8')
+print(len(slides),'slides;',sum(s['seconds'] for s in slides),'seconds')

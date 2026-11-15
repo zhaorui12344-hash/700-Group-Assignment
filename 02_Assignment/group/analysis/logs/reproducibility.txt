@@ -1,0 +1,3 @@
+Final pipeline rerun: all 81 CSV outputs are byte-identical to the prior completed run.
+Visual-only fixes do not change numerical outputs.
+63 independent checks passed on the final outputs.

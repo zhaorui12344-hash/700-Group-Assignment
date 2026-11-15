@@ -1,0 +1,8 @@
+"diagnostic","value"
+"BP_style_nR2_fitted_variance",13.7288553465399
+"BP_style_p",0.000211184832676442
+"Residual_skewness",20.0390084221366
+"Cook_above_4_over_n",224
+"Leverage_above_2p_over_n",678
+"Abs_standardized_residual_above3",76
+"Max_VIF",1.11544255723964

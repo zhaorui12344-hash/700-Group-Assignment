@@ -1,0 +1,3 @@
+"k","exact_silhouette","smallest_n","largest_n","mean_age_range","mean_products_range","mean_transactions_range","median_yield_min","median_yield_max","mean_CLV_min","mean_CLV_max","review"
+2,0.320473687355378,3349,6651,3.32528177556463,0.734035957926029,237.59888447616,20,55,1314.13155916404,3159.83786204837,"Broad engagement split; merges age and single-product activity differences"
+6,0.316279446243294,470,2586,38.1610881023055,1.40570522979398,373.647381152194,-25,118,933.871616395978,4741.10212765957,"Separates younger low-activity, older profitable, and single-product high-activity profiles"

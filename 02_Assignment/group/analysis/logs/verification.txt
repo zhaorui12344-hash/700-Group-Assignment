@@ -1,0 +1,66 @@
+PASS: Original CSV MD5 unchanged 
+PASS: Source dimensions and missingness 
+PASS: Zero-income and positive-transaction counts 
+PASS: Negative profit and repeated-value counts 
+PASS: Raw summary Tot_Prod 
+PASS: Raw summary Income 
+PASS: Raw summary No_Trans 
+PASS: Raw summary Age 
+PASS: Raw summary Yield 
+PASS: Raw summary CLV 
+PASS: No outcome or redundant age category in clustering 
+PASS: All clustering inputs standardised 
+PASS: Saved scaling matches data 
+PASS: Selected Lloyd k-means converged before iteration limit 
+PASS: Every row assigned once and labels match model 
+PASS: Cluster counts and shares reconcile 
+PASS: Cluster table matches assignments 
+PASS: Original-scale cluster means reconcile: Tot_Prod 
+PASS: Original-scale cluster means reconcile: Income 
+PASS: Original-scale cluster means reconcile: No_Trans 
+PASS: Original-scale cluster means reconcile: Age 
+PASS: Original-scale cluster means reconcile: Yield 
+PASS: Original-scale cluster means reconcile: CLV 
+PASS: Cat_Age category proportions sum to one 
+PASS: Cluster profit totals reconcile 
+PASS: Saved cluster centers match assigned observations 
+PASS: Seven k candidates and two exact silhouette checks 
+PASS: Profile-reviewed k=6 is near-best statistically and all groups meet size criterion 
+PASS: Candidate profile comparison recorded 
+PASS: Training and test split covers each row once 
+PASS: Identical primary input patterns do not cross train/test 
+PASS: Identical primary patterns do not cross CV folds 
+PASS: Saved model and split rows agree 
+PASS: Primary regression excludes provenance-risk variables and cluster labels 
+PASS: Training model distinct from all-data refit 
+PASS: Saved CLV predictions equal independent X beta calculation 
+PASS: Test outcomes were not capped or changed 
+PASS: Independent test RMSE and MAE 
+PASS: Independent test R squared 
+PASS: Baseline uses training mean only 
+PASS: All test predictions finite 
+PASS: Independent Yield predictions and RMSE 
+PASS: Sensitivity caps derived from training only 
+PASS: Primary model selected by recorded training CV rule 
+PASS: HC3 standard errors checked against base R delete-one influence identity 
+PASS: Coefficient intervals ordered 
+PASS: At least three recommendations with both evidence sources 
+PASS: Readable HTML report exists 
+PASS: All diagnostic and analysis PNGs exist and are nonempty 
+PASS: Valid PNG signature: 01_distributions.png 
+PASS: Valid PNG signature: 02_outliers.png 
+PASS: Valid PNG signature: 03_age_clv.png 
+PASS: Valid PNG signature: 04_clv_associations.png 
+PASS: Valid PNG signature: 05_zero_income.png 
+PASS: Valid PNG signature: 06_select_k.png 
+PASS: Valid PNG signature: 07_cluster_profiles.png 
+PASS: Valid PNG signature: 08_cluster_profitability.png 
+PASS: Valid PNG signature: 09_regression_diagnostics.png 
+PASS: Valid PNG signature: 10_test_predictions.png 
+PASS: Valid PNG signature: 11_adjusted_age_pattern.png 
+PASS: Valid PNG signature: 12_yield_diagnostics.png 
+PASS: Every local report link resolves 
+PASS: No invalid numeric placeholders in report 
+
+63checks passed.
+Verified: 2026-11-16 00:32:13 

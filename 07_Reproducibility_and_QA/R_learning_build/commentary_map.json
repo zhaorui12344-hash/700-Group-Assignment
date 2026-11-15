@@ -1,0 +1,1206 @@
+[
+  {
+    "language": "en",
+    "source": "00_helpers.R",
+    "start_line": 1,
+    "end_line": 1,
+    "title": "Reusable tools"
+  },
+  {
+    "language": "en",
+    "source": "00_helpers.R",
+    "start_line": 2,
+    "end_line": 6,
+    "title": "Save a result table"
+  },
+  {
+    "language": "en",
+    "source": "00_helpers.R",
+    "start_line": 7,
+    "end_line": 14,
+    "title": "Draw and close a figure"
+  },
+  {
+    "language": "en",
+    "source": "00_helpers.R",
+    "start_line": 15,
+    "end_line": 17,
+    "title": "Formatting and quantiles"
+  },
+  {
+    "language": "en",
+    "source": "00_helpers.R",
+    "start_line": 18,
+    "end_line": 22,
+    "title": "Skewness and one-variable summaries"
+  },
+  {
+    "language": "en",
+    "source": "00_helpers.R",
+    "start_line": 23,
+    "end_line": 34,
+    "title": "Describe each group"
+  },
+  {
+    "language": "en",
+    "source": "00_helpers.R",
+    "start_line": 35,
+    "end_line": 42,
+    "title": "Compare two clusterings"
+  },
+  {
+    "language": "en",
+    "source": "00_helpers.R",
+    "start_line": 43,
+    "end_line": 47,
+    "title": "Check convergence"
+  },
+  {
+    "language": "en",
+    "source": "00_helpers.R",
+    "start_line": 48,
+    "end_line": 50,
+    "title": "Calculate prediction errors"
+  },
+  {
+    "language": "en",
+    "source": "00_helpers.R",
+    "start_line": 51,
+    "end_line": 55,
+    "title": "HC3 covariance"
+  },
+  {
+    "language": "en",
+    "source": "00_helpers.R",
+    "start_line": 56,
+    "end_line": 63,
+    "title": "Coefficients and intervals"
+  },
+  {
+    "language": "en",
+    "source": "00_helpers.R",
+    "start_line": 64,
+    "end_line": 70,
+    "title": "VIF"
+  },
+  {
+    "language": "en",
+    "source": "00_helpers.R",
+    "start_line": 71,
+    "end_line": 89,
+    "title": "Safe HTML text"
+  },
+  {
+    "language": "en",
+    "source": "01_data_eda.R",
+    "start_line": 1,
+    "end_line": 10,
+    "title": "Read and validate the source"
+  },
+  {
+    "language": "en",
+    "source": "01_data_eda.R",
+    "start_line": 11,
+    "end_line": 15,
+    "title": "Create analysis indicators"
+  },
+  {
+    "language": "en",
+    "source": "01_data_eda.R",
+    "start_line": 16,
+    "end_line": 21,
+    "title": "Verify age-category meaning"
+  },
+  {
+    "language": "en",
+    "source": "01_data_eda.R",
+    "start_line": 22,
+    "end_line": 36,
+    "title": "Audit trail and dictionary"
+  },
+  {
+    "language": "en",
+    "source": "01_data_eda.R",
+    "start_line": 37,
+    "end_line": 43,
+    "title": "Univariate summaries and frequencies"
+  },
+  {
+    "language": "en",
+    "source": "01_data_eda.R",
+    "start_line": 44,
+    "end_line": 51,
+    "title": "Screen unusual observations"
+  },
+  {
+    "language": "en",
+    "source": "01_data_eda.R",
+    "start_line": 52,
+    "end_line": 59,
+    "title": "Compare descriptive profiles"
+  },
+  {
+    "language": "en",
+    "source": "01_data_eda.R",
+    "start_line": 60,
+    "end_line": 72,
+    "title": "Correlation and repeated tests"
+  },
+  {
+    "language": "en",
+    "source": "01_data_eda.R",
+    "start_line": 73,
+    "end_line": 85,
+    "title": "Two-group means"
+  },
+  {
+    "language": "en",
+    "source": "01_data_eda.R",
+    "start_line": 86,
+    "end_line": 93,
+    "title": "Chi-square and effect size"
+  },
+  {
+    "language": "en",
+    "source": "01_data_eda.R",
+    "start_line": 94,
+    "end_line": 108,
+    "title": "More than two groups"
+  },
+  {
+    "language": "en",
+    "source": "01_data_eda.R",
+    "start_line": 109,
+    "end_line": 118,
+    "title": "Distribution figures"
+  },
+  {
+    "language": "en",
+    "source": "01_data_eda.R",
+    "start_line": 119,
+    "end_line": 127,
+    "title": "Age and CLV figures"
+  },
+  {
+    "language": "en",
+    "source": "01_data_eda.R",
+    "start_line": 128,
+    "end_line": 142,
+    "title": "Associations and zero-income graphics"
+  },
+  {
+    "language": "en",
+    "source": "02_clusters.R",
+    "start_line": 1,
+    "end_line": 5,
+    "title": "Choose active variables"
+  },
+  {
+    "language": "en",
+    "source": "02_clusters.R",
+    "start_line": 6,
+    "end_line": 10,
+    "title": "Limit extreme distances"
+  },
+  {
+    "language": "en",
+    "source": "02_clusters.R",
+    "start_line": 11,
+    "end_line": 13,
+    "title": "Standardise"
+  },
+  {
+    "language": "en",
+    "source": "02_clusters.R",
+    "start_line": 14,
+    "end_line": 17,
+    "title": "Shared evaluation sample"
+  },
+  {
+    "language": "en",
+    "source": "02_clusters.R",
+    "start_line": 18,
+    "end_line": 29,
+    "title": "Fit candidate k-means solutions"
+  },
+  {
+    "language": "en",
+    "source": "02_clusters.R",
+    "start_line": 30,
+    "end_line": 42,
+    "title": "Shortlist and exact confirmation"
+  },
+  {
+    "language": "en",
+    "source": "02_clusters.R",
+    "start_line": 43,
+    "end_line": 51,
+    "title": "Choose six with a disclosed tradeoff"
+  },
+  {
+    "language": "en",
+    "source": "02_clusters.R",
+    "start_line": 52,
+    "end_line": 63,
+    "title": "Document candidate profiles"
+  },
+  {
+    "language": "en",
+    "source": "02_clusters.R",
+    "start_line": 64,
+    "end_line": 71,
+    "title": "Give stable labels"
+  },
+  {
+    "language": "en",
+    "source": "02_clusters.R",
+    "start_line": 72,
+    "end_line": 78,
+    "title": "Original-scale business profiles"
+  },
+  {
+    "language": "en",
+    "source": "02_clusters.R",
+    "start_line": 79,
+    "end_line": 95,
+    "title": "Name and export segments"
+  },
+  {
+    "language": "en",
+    "source": "02_clusters.R",
+    "start_line": 96,
+    "end_line": 103,
+    "title": "Record quality and release memory"
+  },
+  {
+    "language": "en",
+    "source": "02_clusters.R",
+    "start_line": 104,
+    "end_line": 112,
+    "title": "Random-start stability"
+  },
+  {
+    "language": "en",
+    "source": "02_clusters.R",
+    "start_line": 113,
+    "end_line": 119,
+    "title": "Alternative preprocessing scenarios"
+  },
+  {
+    "language": "en",
+    "source": "02_clusters.R",
+    "start_line": 120,
+    "end_line": 132,
+    "title": "Measure preprocessing sensitivity"
+  },
+  {
+    "language": "en",
+    "source": "02_clusters.R",
+    "start_line": 133,
+    "end_line": 143,
+    "title": "Compare passive outcomes"
+  },
+  {
+    "language": "en",
+    "source": "02_clusters.R",
+    "start_line": 144,
+    "end_line": 147,
+    "title": "Save the fitted recipe"
+  },
+  {
+    "language": "en",
+    "source": "02_clusters.R",
+    "start_line": 148,
+    "end_line": 179,
+    "title": "Plot selection and profiles"
+  },
+  {
+    "language": "en",
+    "source": "03_models.R",
+    "start_line": 1,
+    "end_line": 10,
+    "title": "Prepare alternative age shapes"
+  },
+  {
+    "language": "en",
+    "source": "03_models.R",
+    "start_line": 11,
+    "end_line": 20,
+    "title": "Split related predictor patterns together"
+  },
+  {
+    "language": "en",
+    "source": "03_models.R",
+    "start_line": 21,
+    "end_line": 29,
+    "title": "Five training folds"
+  },
+  {
+    "language": "en",
+    "source": "03_models.R",
+    "start_line": 30,
+    "end_line": 47,
+    "title": "Candidate formulas and cross-validation"
+  },
+  {
+    "language": "en",
+    "source": "03_models.R",
+    "start_line": 48,
+    "end_line": 53,
+    "title": "Select without test-set tuning"
+  },
+  {
+    "language": "en",
+    "source": "03_models.R",
+    "start_line": 54,
+    "end_line": 62,
+    "title": "Evaluate the primary model"
+  },
+  {
+    "language": "en",
+    "source": "03_models.R",
+    "start_line": 63,
+    "end_line": 71,
+    "title": "Training fit versus testing"
+  },
+  {
+    "language": "en",
+    "source": "03_models.R",
+    "start_line": 72,
+    "end_line": 76,
+    "title": "Investigate the constructed target"
+  },
+  {
+    "language": "en",
+    "source": "03_models.R",
+    "start_line": 77,
+    "end_line": 84,
+    "title": "Impute using training information only"
+  },
+  {
+    "language": "en",
+    "source": "03_models.R",
+    "start_line": 85,
+    "end_line": 93,
+    "title": "Compare target-provenance diagnostics"
+  },
+  {
+    "language": "en",
+    "source": "03_models.R",
+    "start_line": 94,
+    "end_line": 104,
+    "title": "Under-30 conditional association"
+  },
+  {
+    "language": "en",
+    "source": "03_models.R",
+    "start_line": 105,
+    "end_line": 121,
+    "title": "Residual and influence diagnostics"
+  },
+  {
+    "language": "en",
+    "source": "03_models.R",
+    "start_line": 122,
+    "end_line": 140,
+    "title": "Sensitivity to extreme training records"
+  },
+  {
+    "language": "en",
+    "source": "03_models.R",
+    "start_line": 141,
+    "end_line": 152,
+    "title": "Compare predictor contributions"
+  },
+  {
+    "language": "en",
+    "source": "03_models.R",
+    "start_line": 153,
+    "end_line": 172,
+    "title": "Secondary current-profit model"
+  },
+  {
+    "language": "en",
+    "source": "03_models.R",
+    "start_line": 173,
+    "end_line": 182,
+    "title": "Inspect subgroup errors"
+  },
+  {
+    "language": "en",
+    "source": "03_models.R",
+    "start_line": 183,
+    "end_line": 193,
+    "title": "Keep training and all-data models distinct"
+  },
+  {
+    "language": "en",
+    "source": "03_models.R",
+    "start_line": 194,
+    "end_line": 205,
+    "title": "Read the diagnostic plots"
+  },
+  {
+    "language": "en",
+    "source": "03_models.R",
+    "start_line": 206,
+    "end_line": 223,
+    "title": "Hold other inputs fixed"
+  },
+  {
+    "language": "en",
+    "source": "04_report.R",
+    "start_line": 1,
+    "end_line": 16,
+    "title": "Select evidence for interpretation"
+  },
+  {
+    "language": "en",
+    "source": "04_report.R",
+    "start_line": 17,
+    "end_line": 43,
+    "title": "Tie actions to two evidence sources"
+  },
+  {
+    "language": "en",
+    "source": "04_report.R",
+    "start_line": 44,
+    "end_line": 55,
+    "title": "Record analytical decisions"
+  },
+  {
+    "language": "en",
+    "source": "04_report.R",
+    "start_line": 56,
+    "end_line": 79,
+    "title": "Map rubric and classroom methods"
+  },
+  {
+    "language": "en",
+    "source": "04_report.R",
+    "start_line": 80,
+    "end_line": 112,
+    "title": "Assemble the HTML document"
+  },
+  {
+    "language": "en",
+    "source": "04_report.R",
+    "start_line": 113,
+    "end_line": 139,
+    "title": "Write the findings and data audit"
+  },
+  {
+    "language": "en",
+    "source": "04_report.R",
+    "start_line": 140,
+    "end_line": 161,
+    "title": "Explain bivariate evidence"
+  },
+  {
+    "language": "en",
+    "source": "04_report.R",
+    "start_line": 162,
+    "end_line": 191,
+    "title": "Explain the clustering decision"
+  },
+  {
+    "language": "en",
+    "source": "04_report.R",
+    "start_line": 192,
+    "end_line": 213,
+    "title": "Explain regression performance"
+  },
+  {
+    "language": "en",
+    "source": "04_report.R",
+    "start_line": 214,
+    "end_line": 234,
+    "title": "Explain limitations and sensitivity"
+  },
+  {
+    "language": "en",
+    "source": "04_report.R",
+    "start_line": 235,
+    "end_line": 274,
+    "title": "Publish actions and reproducibility"
+  },
+  {
+    "language": "en",
+    "source": "verify_results.R",
+    "start_line": 6,
+    "end_line": 14,
+    "title": "Independent checks"
+  },
+  {
+    "language": "en",
+    "source": "verify_results.R",
+    "start_line": 15,
+    "end_line": 26,
+    "title": "Verify source and summaries"
+  },
+  {
+    "language": "en",
+    "source": "verify_results.R",
+    "start_line": 27,
+    "end_line": 37,
+    "title": "Verify clustering inputs"
+  },
+  {
+    "language": "en",
+    "source": "verify_results.R",
+    "start_line": 38,
+    "end_line": 50,
+    "title": "Reconcile profiles and centroids"
+  },
+  {
+    "language": "en",
+    "source": "verify_results.R",
+    "start_line": 51,
+    "end_line": 57,
+    "title": "Verify selection evidence"
+  },
+  {
+    "language": "en",
+    "source": "verify_results.R",
+    "start_line": 58,
+    "end_line": 67,
+    "title": "Verify partitions and model provenance"
+  },
+  {
+    "language": "en",
+    "source": "verify_results.R",
+    "start_line": 68,
+    "end_line": 79,
+    "title": "Recompute predictions and errors"
+  },
+  {
+    "language": "en",
+    "source": "verify_results.R",
+    "start_line": 80,
+    "end_line": 87,
+    "title": "Verify secondary results and training rules"
+  },
+  {
+    "language": "en",
+    "source": "verify_results.R",
+    "start_line": 88,
+    "end_line": 95,
+    "title": "Independent HC3 identity"
+  },
+  {
+    "language": "en",
+    "source": "verify_results.R",
+    "start_line": 96,
+    "end_line": 104,
+    "title": "Verify practical outputs"
+  },
+  {
+    "language": "en",
+    "source": "verify_results.R",
+    "start_line": 105,
+    "end_line": 113,
+    "title": "Check links and finish"
+  },
+  {
+    "language": "zh",
+    "source": "00_helpers.R",
+    "start_line": 1,
+    "end_line": 1,
+    "title": "可复用工具"
+  },
+  {
+    "language": "zh",
+    "source": "00_helpers.R",
+    "start_line": 2,
+    "end_line": 6,
+    "title": "保存结果表"
+  },
+  {
+    "language": "zh",
+    "source": "00_helpers.R",
+    "start_line": 7,
+    "end_line": 14,
+    "title": "绘图与关闭设备"
+  },
+  {
+    "language": "zh",
+    "source": "00_helpers.R",
+    "start_line": 15,
+    "end_line": 17,
+    "title": "格式与分位数"
+  },
+  {
+    "language": "zh",
+    "source": "00_helpers.R",
+    "start_line": 18,
+    "end_line": 22,
+    "title": "偏度与单变量概括"
+  },
+  {
+    "language": "zh",
+    "source": "00_helpers.R",
+    "start_line": 23,
+    "end_line": 34,
+    "title": "为每组建立画像"
+  },
+  {
+    "language": "zh",
+    "source": "00_helpers.R",
+    "start_line": 35,
+    "end_line": 42,
+    "title": "比较两次分群"
+  },
+  {
+    "language": "zh",
+    "source": "00_helpers.R",
+    "start_line": 43,
+    "end_line": 47,
+    "title": "检查算法是否停稳"
+  },
+  {
+    "language": "zh",
+    "source": "00_helpers.R",
+    "start_line": 48,
+    "end_line": 50,
+    "title": "计算预测误差"
+  },
+  {
+    "language": "zh",
+    "source": "00_helpers.R",
+    "start_line": 51,
+    "end_line": 55,
+    "title": "HC3 稳健协方差"
+  },
+  {
+    "language": "zh",
+    "source": "00_helpers.R",
+    "start_line": 56,
+    "end_line": 63,
+    "title": "系数与区间"
+  },
+  {
+    "language": "zh",
+    "source": "00_helpers.R",
+    "start_line": 64,
+    "end_line": 70,
+    "title": "方差膨胀因子"
+  },
+  {
+    "language": "zh",
+    "source": "00_helpers.R",
+    "start_line": 71,
+    "end_line": 89,
+    "title": "安全显示报告文字"
+  },
+  {
+    "language": "zh",
+    "source": "01_data_eda.R",
+    "start_line": 1,
+    "end_line": 10,
+    "title": "读取并检查数据"
+  },
+  {
+    "language": "zh",
+    "source": "01_data_eda.R",
+    "start_line": 11,
+    "end_line": 15,
+    "title": "新建分析标记"
+  },
+  {
+    "language": "zh",
+    "source": "01_data_eda.R",
+    "start_line": 16,
+    "end_line": 21,
+    "title": "核对年龄类别含义"
+  },
+  {
+    "language": "zh",
+    "source": "01_data_eda.R",
+    "start_line": 22,
+    "end_line": 36,
+    "title": "审计记录与变量字典"
+  },
+  {
+    "language": "zh",
+    "source": "01_data_eda.R",
+    "start_line": 37,
+    "end_line": 43,
+    "title": "单变量统计与频数"
+  },
+  {
+    "language": "zh",
+    "source": "01_data_eda.R",
+    "start_line": 44,
+    "end_line": 51,
+    "title": "筛查异常观察值"
+  },
+  {
+    "language": "zh",
+    "source": "01_data_eda.R",
+    "start_line": 52,
+    "end_line": 59,
+    "title": "比较描述画像"
+  },
+  {
+    "language": "zh",
+    "source": "01_data_eda.R",
+    "start_line": 60,
+    "end_line": 72,
+    "title": "相关与多重检验"
+  },
+  {
+    "language": "zh",
+    "source": "01_data_eda.R",
+    "start_line": 73,
+    "end_line": 85,
+    "title": "两组均值比较"
+  },
+  {
+    "language": "zh",
+    "source": "01_data_eda.R",
+    "start_line": 86,
+    "end_line": 93,
+    "title": "卡方检验与效应量"
+  },
+  {
+    "language": "zh",
+    "source": "01_data_eda.R",
+    "start_line": 94,
+    "end_line": 108,
+    "title": "多组均值比较"
+  },
+  {
+    "language": "zh",
+    "source": "01_data_eda.R",
+    "start_line": 109,
+    "end_line": 118,
+    "title": "分布图"
+  },
+  {
+    "language": "zh",
+    "source": "01_data_eda.R",
+    "start_line": 119,
+    "end_line": 127,
+    "title": "年龄与 CLV 图"
+  },
+  {
+    "language": "zh",
+    "source": "01_data_eda.R",
+    "start_line": 128,
+    "end_line": 142,
+    "title": "关联与零收入图"
+  },
+  {
+    "language": "zh",
+    "source": "02_clusters.R",
+    "start_line": 1,
+    "end_line": 5,
+    "title": "选择主动变量"
+  },
+  {
+    "language": "zh",
+    "source": "02_clusters.R",
+    "start_line": 6,
+    "end_line": 10,
+    "title": "限制极端距离"
+  },
+  {
+    "language": "zh",
+    "source": "02_clusters.R",
+    "start_line": 11,
+    "end_line": 13,
+    "title": "标准化"
+  },
+  {
+    "language": "zh",
+    "source": "02_clusters.R",
+    "start_line": 14,
+    "end_line": 17,
+    "title": "共用评价样本"
+  },
+  {
+    "language": "zh",
+    "source": "02_clusters.R",
+    "start_line": 18,
+    "end_line": 29,
+    "title": "拟合不同群数"
+  },
+  {
+    "language": "zh",
+    "source": "02_clusters.R",
+    "start_line": 30,
+    "end_line": 42,
+    "title": "入围与全样本复核"
+  },
+  {
+    "language": "zh",
+    "source": "02_clusters.R",
+    "start_line": 43,
+    "end_line": 51,
+    "title": "说明六群选择的取舍"
+  },
+  {
+    "language": "zh",
+    "source": "02_clusters.R",
+    "start_line": 52,
+    "end_line": 63,
+    "title": "保存候选画像对比"
+  },
+  {
+    "language": "zh",
+    "source": "02_clusters.R",
+    "start_line": 64,
+    "end_line": 71,
+    "title": "固定可复述的群号"
+  },
+  {
+    "language": "zh",
+    "source": "02_clusters.R",
+    "start_line": 72,
+    "end_line": 78,
+    "title": "原量纲业务画像"
+  },
+  {
+    "language": "zh",
+    "source": "02_clusters.R",
+    "start_line": 79,
+    "end_line": 95,
+    "title": "命名与导出群体"
+  },
+  {
+    "language": "zh",
+    "source": "02_clusters.R",
+    "start_line": 96,
+    "end_line": 103,
+    "title": "记录质量并释放内存"
+  },
+  {
+    "language": "zh",
+    "source": "02_clusters.R",
+    "start_line": 104,
+    "end_line": 112,
+    "title": "随机起点稳定性"
+  },
+  {
+    "language": "zh",
+    "source": "02_clusters.R",
+    "start_line": 113,
+    "end_line": 119,
+    "title": "替代预处理方案"
+  },
+  {
+    "language": "zh",
+    "source": "02_clusters.R",
+    "start_line": 120,
+    "end_line": 132,
+    "title": "衡量处理敏感性"
+  },
+  {
+    "language": "zh",
+    "source": "02_clusters.R",
+    "start_line": 133,
+    "end_line": 143,
+    "title": "比较被动盈利结果"
+  },
+  {
+    "language": "zh",
+    "source": "02_clusters.R",
+    "start_line": 144,
+    "end_line": 147,
+    "title": "保存完整拟合方案"
+  },
+  {
+    "language": "zh",
+    "source": "02_clusters.R",
+    "start_line": 148,
+    "end_line": 179,
+    "title": "绘制选择依据与画像"
+  },
+  {
+    "language": "zh",
+    "source": "03_models.R",
+    "start_line": 1,
+    "end_line": 10,
+    "title": "准备年龄的不同形式"
+  },
+  {
+    "language": "zh",
+    "source": "03_models.R",
+    "start_line": 11,
+    "end_line": 20,
+    "title": "将相同输入组合一起切分"
+  },
+  {
+    "language": "zh",
+    "source": "03_models.R",
+    "start_line": 21,
+    "end_line": 29,
+    "title": "五个训练折"
+  },
+  {
+    "language": "zh",
+    "source": "03_models.R",
+    "start_line": 30,
+    "end_line": 47,
+    "title": "候选公式与交叉验证"
+  },
+  {
+    "language": "zh",
+    "source": "03_models.R",
+    "start_line": 48,
+    "end_line": 53,
+    "title": "不用测试集调参"
+  },
+  {
+    "language": "zh",
+    "source": "03_models.R",
+    "start_line": 54,
+    "end_line": 62,
+    "title": "评价主模型"
+  },
+  {
+    "language": "zh",
+    "source": "03_models.R",
+    "start_line": 63,
+    "end_line": 71,
+    "title": "训练拟合与测试的区别"
+  },
+  {
+    "language": "zh",
+    "source": "03_models.R",
+    "start_line": 72,
+    "end_line": 76,
+    "title": "检查衍生目标的来源"
+  },
+  {
+    "language": "zh",
+    "source": "03_models.R",
+    "start_line": 77,
+    "end_line": 84,
+    "title": "仅用训练信息填补"
+  },
+  {
+    "language": "zh",
+    "source": "03_models.R",
+    "start_line": 85,
+    "end_line": 93,
+    "title": "比较目标来源诊断"
+  },
+  {
+    "language": "zh",
+    "source": "03_models.R",
+    "start_line": 94,
+    "end_line": 104,
+    "title": "30 岁以下的条件关联"
+  },
+  {
+    "language": "zh",
+    "source": "03_models.R",
+    "start_line": 105,
+    "end_line": 121,
+    "title": "残差与影响诊断"
+  },
+  {
+    "language": "zh",
+    "source": "03_models.R",
+    "start_line": 122,
+    "end_line": 140,
+    "title": "极端训练记录的敏感性"
+  },
+  {
+    "language": "zh",
+    "source": "03_models.R",
+    "start_line": 141,
+    "end_line": 152,
+    "title": "比较预测变量贡献"
+  },
+  {
+    "language": "zh",
+    "source": "03_models.R",
+    "start_line": 153,
+    "end_line": 172,
+    "title": "补充当前利润模型"
+  },
+  {
+    "language": "zh",
+    "source": "03_models.R",
+    "start_line": 173,
+    "end_line": 182,
+    "title": "检查分组误差"
+  },
+  {
+    "language": "zh",
+    "source": "03_models.R",
+    "start_line": 183,
+    "end_line": 193,
+    "title": "区分训练模型与全数据模型"
+  },
+  {
+    "language": "zh",
+    "source": "03_models.R",
+    "start_line": 194,
+    "end_line": 205,
+    "title": "阅读诊断图"
+  },
+  {
+    "language": "zh",
+    "source": "03_models.R",
+    "start_line": 206,
+    "end_line": 223,
+    "title": "固定其他输入看年龄关联"
+  },
+  {
+    "language": "zh",
+    "source": "04_report.R",
+    "start_line": 1,
+    "end_line": 16,
+    "title": "选取解释所需证据"
+  },
+  {
+    "language": "zh",
+    "source": "04_report.R",
+    "start_line": 17,
+    "end_line": 43,
+    "title": "建议连接两类证据"
+  },
+  {
+    "language": "zh",
+    "source": "04_report.R",
+    "start_line": 44,
+    "end_line": 55,
+    "title": "记录分析决策"
+  },
+  {
+    "language": "zh",
+    "source": "04_report.R",
+    "start_line": 56,
+    "end_line": 79,
+    "title": "对照作业与课堂"
+  },
+  {
+    "language": "zh",
+    "source": "04_report.R",
+    "start_line": 80,
+    "end_line": 112,
+    "title": "组装 HTML 文档"
+  },
+  {
+    "language": "zh",
+    "source": "04_report.R",
+    "start_line": 113,
+    "end_line": 139,
+    "title": "撰写发现与数据审计"
+  },
+  {
+    "language": "zh",
+    "source": "04_report.R",
+    "start_line": 140,
+    "end_line": 161,
+    "title": "解释双变量证据"
+  },
+  {
+    "language": "zh",
+    "source": "04_report.R",
+    "start_line": 162,
+    "end_line": 191,
+    "title": "解释分群选择"
+  },
+  {
+    "language": "zh",
+    "source": "04_report.R",
+    "start_line": 192,
+    "end_line": 213,
+    "title": "解释回归表现"
+  },
+  {
+    "language": "zh",
+    "source": "04_report.R",
+    "start_line": 214,
+    "end_line": 234,
+    "title": "解释限制与敏感性"
+  },
+  {
+    "language": "zh",
+    "source": "04_report.R",
+    "start_line": 235,
+    "end_line": 274,
+    "title": "写入行动与复现说明"
+  },
+  {
+    "language": "zh",
+    "source": "verify_results.R",
+    "start_line": 6,
+    "end_line": 14,
+    "title": "独立检查"
+  },
+  {
+    "language": "zh",
+    "source": "verify_results.R",
+    "start_line": 15,
+    "end_line": 26,
+    "title": "核对源数据与概括"
+  },
+  {
+    "language": "zh",
+    "source": "verify_results.R",
+    "start_line": 27,
+    "end_line": 37,
+    "title": "核对聚类输入"
+  },
+  {
+    "language": "zh",
+    "source": "verify_results.R",
+    "start_line": 38,
+    "end_line": 50,
+    "title": "对账画像与中心"
+  },
+  {
+    "language": "zh",
+    "source": "verify_results.R",
+    "start_line": 51,
+    "end_line": 57,
+    "title": "核对选择依据"
+  },
+  {
+    "language": "zh",
+    "source": "verify_results.R",
+    "start_line": 58,
+    "end_line": 67,
+    "title": "核对切分与模型来源"
+  },
+  {
+    "language": "zh",
+    "source": "verify_results.R",
+    "start_line": 68,
+    "end_line": 79,
+    "title": "重算预测与误差"
+  },
+  {
+    "language": "zh",
+    "source": "verify_results.R",
+    "start_line": 80,
+    "end_line": 87,
+    "title": "核对补充结果与训练规则"
+  },
+  {
+    "language": "zh",
+    "source": "verify_results.R",
+    "start_line": 88,
+    "end_line": 95,
+    "title": "独立核验 HC3"
+  },
+  {
+    "language": "zh",
+    "source": "verify_results.R",
+    "start_line": 96,
+    "end_line": 104,
+    "title": "核对实际交付物"
+  },
+  {
+    "language": "zh",
+    "source": "verify_results.R",
+    "start_line": 105,
+    "end_line": 113,
+    "title": "检查链接并结束"
+  }
+]

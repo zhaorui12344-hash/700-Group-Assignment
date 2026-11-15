@@ -1,0 +1,23 @@
+
+Call:
+lm(formula = yield_formulas[[yield_name]], data = train)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+ -1373   -189    -77     56  50837 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 50.925474  22.705204   2.243   0.0249 *  
+Tot_Prod    98.498166  13.220793   7.450 1.03e-13 ***
+No_Trans    -0.561932   0.061575  -9.126  < 2e-16 ***
+Age_c        5.436602   0.440828  12.333  < 2e-16 ***
+Income       0.083164   0.007132  11.660  < 2e-16 ***
+IncomeZero   4.541453  23.401276   0.194   0.8461    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 681.9 on 7997 degrees of freedom
+Multiple R-squared:  0.04778,	Adjusted R-squared:  0.04718 
+F-statistic: 80.25 on 5 and 7997 DF,  p-value: < 2.2e-16
+
